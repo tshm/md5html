@@ -1,17 +1,18 @@
 var app = angular.module('app', []);
 
 app.controller('MainCtrl', function($scope) {
-  $scope.supported = !!(window.File && window.FileReader && window.FileList && window.Blob);
+  $scope.supported = !!(window.File && window.FileReader && window.FileList);
 });
 
 app.controller('md5', function($scope) {
   $scope.files = [];
 
   $scope.$watch( 'filelist', function( filelist ) {
+		//console.log( filelist );
     if ( !filelist ) return;
     $scope.files = [];
     for ( var i = 0, file; file = filelist[i]; i++ ) {
-      file.md5 = '...';
+      file.md5 = 'Calculating...';
       $scope.showmd5( file );
       $scope.files.push( file );
     }
@@ -32,6 +33,15 @@ app.controller('md5', function($scope) {
   $scope.clear = function() {
     $scope.files = [];
   };
+
+});
+
+app.directive('selectAll', function() {
+  return function( scope, elm, attrs ) {
+	  elm.bind('hover', function() {
+		  elm.select();
+		});
+	};
 });
 
 app.directive('dropArea', function() {
