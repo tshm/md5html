@@ -1,0 +1,9 @@
+.box {
+  border: 2px dashed;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.hidden {
+  display: none;
+}

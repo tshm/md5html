@@ -1,0 +1,39 @@
+<!doctype html>
+<html ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <title>MD5 Calculator</title>
+  <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script src="https://raw.github.com/twitter/bootstrap/master/docs/assets/js/bootstrap.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.js"></script>
+  <script src="https://raw.github.com/angular-ui/angular-ui/master/build/angular-ui.js"></script>
+  <script src="http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js"></script>
+  <script src="app.js"></script>
+</head>
+<body>
+	<div ng-controller="MainCtrl" ng-init="debug = false">
+    <span ng-show="!supported">browser is not supported.</span>
+    <div ng-controller="md5">
+      <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
+      <br>
+      <div class="box" drop-area="filelist">drop files or click to select</div>
+
+      <div ng-hide="files.length == 0">
+      <button class="btn" ng-click="clear()">clear</button>
+      <table class="table">
+      <thead><th>file name</th><th>md5</th></thead>
+      <tbody>
+        <tr ng-repeat="file in files">
+          <td>{{ file.name }}</td>
+          <td>{{ file.md5 }}</td>
+        </tr>
+      </tbody>
+      </table>
+      </div>
+      <pre ng-show="debug">{{ files | json }}</pre>
+  	</div>
+  </div>
+</body>
+</html>
