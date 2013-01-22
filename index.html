@@ -1,42 +1,50 @@
 <!doctype html>
-<html lang="en" ng-app="app">
+<html lang="en" class="ng-app:app" id="ng-app">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MD5 Calculator</title>
-  <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script src="https://raw.github.com/twitter/bootstrap/master/docs/assets/js/bootstrap.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.js"></script>
-  <script src="https://raw.github.com/angular-ui/angular-ui/master/build/angular-ui.js"></script>
-  <script src="http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js"></script>
-  <script src="app.js"></script>
+  <link rel="stylesheet" href="lib/jquery-ui.css"/>
+  <link rel="stylesheet" href="lib/bootstrap.css"/>
+  <script src="lib/html5shiv.js"></script>
+  <script src="lib/json3.min.js"></script>
+  <script src="lib/jquery.js"></script>
+  <script src="lib/jquery-ui.js"></script>
+  <script src="lib/angular.js"></script>
+  <script src="lib/bootstrap.js"></script>
+  <script src="lib/md5.js"></script>
+  <script src="js/app.js"></script>
+  <style>
+.box { border: 2px dashed; border-radius: 5px; padding: 10px; }
+.hidden { display: none; }
+.md5sum { font-family: "Courier"; width: 20em; }
+  </style>
 </head>
 <body>
-	<div class="container" ng-controller="MainCtrl" ng-init="debug = false">
-		<span ng-show="!supported">browser is not supported.</span>
-		<div ng-controller="md5">
-			<input type="file" name="filelist" filelist-bind multiple class="hidden"/>
-			<br>
-			<div class="alert alert-info" drop-area="filelist"><i class="icon icon-file"></i>drop files or click to select</div>
+  <div class="container" ng-controller="MainCtrl" ng-init="debug = false">
+    <span ng-show="!supported">browser is not supported.</span>
+    <div ng-controller="md5">
+      <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
+      <br>
+      <div class="alert alert-info" drop-area="filelist"><i class="icon icon-file"></i>drop files or click to select</div>
 
-			<div ng-hide="files.length == 0">
-				<a href="#" class="btn" ng-click="clear()">
-					<i class="icon icon-remove"></i> clear</a>
-				<table class="table table-striped">
-				<thead><th>file name</th><th>md5</th></thead>
-				<tbody>
-					<tr ng-repeat="file in files">
-						<td>{{ file.name }}</td>
-						<td>
-							<input class="md5sum" ng-readonly="true" select-all value="{{ file.md5 }}"/>
-						</td>
-					</tr>
-				</tbody>
-				</table>
-			</div>
-			<pre ng-show="debug">{{ files | json }}</pre>
-		</div>
-	</div>
+      <div ng-hide="files.length == 0">
+        <a href="#" class="btn" ng-click="clear()">
+          <i class="icon icon-remove"></i> clear</a>
+        <table class="table table-striped">
+        <thead><th>file name</th><th>md5</th></thead>
+        <tbody>
+          <tr ng-repeat="file in files">
+            <td>{{ file.name }}</td>
+            <td>
+              <input class="md5sum" ng-readonly="true" select-all value="{{ file.md5 }}"/>
+            </td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+      <pre ng-show="debug">{{ files | json }}</pre>
+    </div>
+  </div>
 </body>
 </html>
