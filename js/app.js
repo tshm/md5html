@@ -1,34 +1,55 @@
+// handle missing window.console.log cases.
+window.console = window.console || {log: function(){}};
+
 var app = angular.module('app', []);
 
-app.controller('MainCtrl', function($scope) {
+app.controller('MainCtrl', function( $scope ) {
   $scope.supported = !!(window.File && window.FileReader && window.FileList);
 });
 
-app.controller('md5', function($scope) {
+app.factory('md5', function( $q, $rootScope ) {
+  var engine = CybozuLabs.MD5;
+  var md5 = {};
+  md5.read = function( file ) {
+    console.log("read callded: ", file);
+    var deffered = $q.defer();
+    var reader = new FileReader();
+    reader.onload = function( event ) {
+      deffered.resolve( engine.calc( event.target.result ));
+      $rootScope.$apply();
+    };
+    reader.onerror = function( event ) {
+      console.log("onerror callded");
+      deffered.reject( this );
+      $rootScope.$apply();
+    };
+    reader.readAsBinaryString( file );
+    return deffered.promise;
+  };
+  return md5;
+});
+
+app.controller('md5', function($scope, md5) {
   $scope.files = [];
 
   $scope.$watch( 'filelist', function( filelist ) {
 		//console.log( filelist );
     if ( !filelist ) return;
     $scope.files = [];
-    for ( var i = 0, file; file = filelist[i]; i++ ) {
+    var then = function( file ) {
+      return function( result ) {
+        file.md5 = result;
+        console.log("then called: ", result);
+      };
+    };
+    console.log( filelist );
+    for ( var i = filelist.length - 1; i >= 0; i-- ) {
+      var file = filelist[i];
+      md5.read( file ).then( then( file ) );
       file.md5 = 'Calculating...';
-      $scope.showmd5( file );
       $scope.files.push( file );
     }
   });
-  
-  $scope.showmd5 = function( file ) {
-    var reader = new FileReader();
-    reader.onloadend = function( event ) {
-      if ( event.target.readyState == FileReader.DONE ) {
-        $scope.$apply(function(){
-          file.md5 = CybozuLabs.MD5.calc( event.target.result );
-        });
-      }
-    };
-    reader.readAsBinaryString( file );
-  };
   
   $scope.clear = function() {
     $scope.files = [];
@@ -38,8 +59,8 @@ app.controller('md5', function($scope) {
 
 app.directive('selectAll', function() {
   return function( scope, elm, attrs ) {
-	  elm.bind('hover', function() {
-		  elm.select();
+    elm.bind('hover', function() {
+      elm.select();
 		});
 	};
 });
