@@ -18,11 +18,12 @@
 .box { border: 2px dashed; border-radius: 5px; padding: 10px; }
 .hidden { display: none; }
 .md5sum { font-family: "Courier"; width: 20em; }
+input[select-all] { cursor: auto; }
   </style>
 </head>
 <body>
   <div class="container" ng-controller="MainCtrl" ng-init="debug = false">
-    <span ng-show="!supported">browser is not supported.</span>
+    <span ng-show="!supported" class="alert alert-error">browser is not supported.</span>
     <div ng-controller="md5">
       <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
       <br>
@@ -37,7 +38,7 @@
           <tr ng-repeat="file in files">
             <td>{{ file.name }}</td>
             <td>
-              <input class="md5sum" ng-readonly="true" select-all value="{{ file.md5 }}"/>
+              <input class="md5sum" readonly="true" select-all value="{{ file.md5 }}"/>
             </td>
           </tr>
         </tbody>

@@ -59,7 +59,7 @@ app.controller('md5', function($scope, md5) {
 
 app.directive('selectAll', function() {
   return function( scope, elm, attrs ) {
-    elm.bind('hover', function() {
+    elm.bind('focus', function() {
       elm.select();
 		});
 	};
