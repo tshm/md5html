@@ -1,2 +1,5 @@
-md5.html
-md5_offline.html
+dist
+tmp
+temp
+node_modules
+.local.vim

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title></title>
+  <meta name="description" content=""/>
+  <meta name="viewport" content="width=device-width"/>
+  <!-- build:js scripts/vendors.js -->
+  <link rel="stylesheet" href="styles/bootstrap.css"/>
+  <link rel="stylesheet" href="styles/main.css"/>
+  <!-- endbuild -->
+</head>
+<body ng-app="md5htmlApp">
+<!--[if lt IE 7]>
+<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<script src="scripts/vendor/es5-shim.min.js"></script>
+<script src="scripts/vendor/json3.min.js"></script>
+<![endif]-->
+
+<div class="container" ng-controller="MainCtrl" ng-init="debug = false">
+  <span ng-show="!supported" class="alert alert-error">browser is not supported.</span>
+  <div ng-controller="md5">
+    <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
+    <br>
+    <div class="alert alert-info" drop-area="filelist"><i class="icon icon-file"></i>drop files or click to select</div>
+
+    <div ng-hide="files.length == 0">
+      <a href="#" class="btn" ng-click="clear()">
+        <i class="icon icon-remove"></i> clear</a>
+      <table class="table table-striped">
+      <thead><th>file name</th><th>md5</th></thead>
+      <tbody>
+        <tr ng-repeat="file in files">
+          <td>{{ file.name }}</td>
+          <td>
+            <input class="md5sum" readonly="true" select-all value="{{ file.md5 }}"/>
+          </td>
+        </tr>
+      </tbody>
+      </table>
+    </div>
+    <pre ng-show="debug">{{ files | json }}</pre>
+  </div>
+</div>
+
+<!-- build:js scripts/vendors.js -->
+<script src="components/jquery/jquery.js"></script>
+<script src="scripts/vendor/angular.js"></script>
+<script src="scripts/vendor/md5.js"></script>
+<!-- endbuild -->
+
+<!-- build:js scripts/scripts.js -->
+<script src="scripts/app.js"></script>
+<!-- endbuild -->
+
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+</body>
+</html>
