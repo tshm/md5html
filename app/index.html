@@ -10,21 +10,21 @@
   <meta name="description" content=""/>
   <meta name="viewport" content="width=device-width"/>
   <!-- build:js scripts/vendors.js -->
-  <link rel="stylesheet" href="styles/bootstrap.css"/>
+  <link rel="stylesheet" href="components/bootstrap.css/css/bootstrap.css"/>
   <link rel="stylesheet" href="styles/main.css"/>
   <!-- endbuild -->
 </head>
 <body ng-app="md5htmlApp">
 <!--[if lt IE 7]>
-<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-<![endif]-->
+  <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
 
 <!--[if lt IE 9]>
 <script src="scripts/vendor/es5-shim.min.js"></script>
 <script src="scripts/vendor/json3.min.js"></script>
 <![endif]-->
 
-<div class="container" ng-controller="MainCtrl" ng-init="debug = false">
+<div class="container" ng-controller="MainCtrl" ng-init="debug = true">
   <span ng-show="!supported" class="alert alert-error">browser is not supported.</span>
   <div ng-controller="md5">
     <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
@@ -51,21 +51,21 @@
 </div>
 
 <!-- build:js scripts/vendors.js -->
-<script src="components/jquery/jquery.js"></script>
-<script src="scripts/vendor/angular.js"></script>
-<script src="scripts/vendor/md5.js"></script>
-<!-- endbuild -->
+  <script src="components/jquery/jquery.js"></script>
+  <script src="scripts/vendor/angular.js"></script>
+  <script src="scripts/vendor/md5.js"></script>
+  <!-- endbuild -->
 
 <!-- build:js scripts/scripts.js -->
-<script src="scripts/app.js"></script>
-<!-- endbuild -->
+  <script src="scripts/app.js"></script>
+  <!-- endbuild -->
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-<script>
-  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
+  <script>
+    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+  </script>
 </body>
 </html>
