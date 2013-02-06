@@ -25,6 +25,7 @@
 <![endif]-->
 
 <div class="container" ng-controller="MainCtrl" ng-init="debug = true">
+  <button ng-show="debug" ng-click="$digest()">digest</button>
   <span ng-show="!supported" class="alert alert-error">browser is not supported.</span>
   <div ng-controller="md5">
     <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
@@ -47,6 +48,7 @@
       </table>
     </div>
     <pre ng-show="debug">{{ files | json }}</pre>
+    <pre ng-show="debug">{{ filelist | json }}</pre>
   </div>
 </div>
 

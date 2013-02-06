@@ -33,22 +33,21 @@ app.controller('md5', function($scope, md5) {
   $scope.files = [];
 
   $scope.$watch( 'filelist', function( filelist ) {
-		//console.log( filelist );
+		console.log( filelist ); //
     if ( !filelist ) return;
-    $scope.files = [];
     var then = function( file ) {
       return function( result ) {
         file.md5 = result;
         console.log("then called: ", result);
       };
     };
-    console.log( filelist );
     for ( var i = filelist.length - 1; i >= 0; i-- ) {
       var file = filelist[i];
       md5.read( file ).then( then( file ) );
       file.md5 = 'Calculating...';
       $scope.files.push( file );
     }
+    $scope.filelist = undefined;
   });
   
   $scope.clear = function() {
@@ -74,7 +73,7 @@ app.directive('dropArea', function() {
     elm.bind("drop", function( event ) {
       event.stopPropagation();
       event.preventDefault();
-      scope.$apply(function( scope ) {
+      scope.$apply(function() {
         scope[ attrs.dropArea ] = event.originalEvent.dataTransfer.files;
       });
     });
@@ -87,9 +86,9 @@ app.directive('dropArea', function() {
 app.directive("filelistBind", function() {
   return function( scope, elm, attrs ) {
     elm.bind("change", function( evt ) {
-      //console.log( evt );
-      scope.$apply(function( scope ) {
+      scope.$apply(function() {
         scope[ attrs.name ] = evt.target.files;
+        //console.log( scope[ attrs.name ] );
       });
     });
   };
