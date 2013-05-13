@@ -37,6 +37,8 @@
     <div ng-hide="files.length == 0">
       <a href="#" class="btn" ng-click="clear()">
         <i class="icon icon-remove"></i> clear</a>
+      <a href="#" class="btn" download="md5.txt" ng-click="download()" ng-href="{{ md5href }}">
+        <i class="icon icon-file"></i> download file</a>
       <table class="table table-striped">
       <thead><th>file name</th><th>md5</th></thead>
       <tbody>

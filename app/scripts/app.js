@@ -29,7 +29,7 @@ app.factory('md5', function( $q, $rootScope ) {
   return md5;
 });
 
-app.controller('md5', function($scope, md5) {
+app.controller('md5', function( $scope, $window, md5 ) {
   $scope.files = [];
 
   $scope.$watch('filelist', function( filelist ) {
@@ -38,6 +38,7 @@ app.controller('md5', function($scope, md5) {
       return function( result ) {
         file.md5 = result;
         console.log('then called: ', result);
+        $scope.makeTxt();
       };
     };
     for ( var i = filelist.length - 1; i >= 0; i-- ) {
@@ -53,6 +54,11 @@ app.controller('md5', function($scope, md5) {
     $scope.files = [];
   };
 
+  var URL = $window.URL || $window.webkitURL;
+  $scope.makeTxt = function() {
+    var txt = $scope.files.map(function(f) { return f.name + ', ' + f.md5; }).join('\n');
+    $scope.md5href = URL.createObjectURL( new Blob([ txt ], {type: 'text/plain'}) );
+  };
 });
 
 app.directive('selectAll', function() {
