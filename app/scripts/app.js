@@ -11,7 +11,7 @@ app.factory('md5', function( $q, $rootScope ) {
   var engine = CybozuLabs.MD5;
   var md5 = {};
   md5.read = function( file ) {
-    console.log("read callded: ", file);
+    console.log('read callded: ', file);
     var deffered = $q.defer();
     var reader = new FileReader();
     reader.onload = function( event ) {
@@ -19,7 +19,7 @@ app.factory('md5', function( $q, $rootScope ) {
       $rootScope.$apply();
     };
     reader.onerror = function( event ) {
-      console.log("onerror callded");
+      console.log('onerror callded');
       deffered.reject( this );
       $rootScope.$apply();
     };
@@ -32,13 +32,12 @@ app.factory('md5', function( $q, $rootScope ) {
 app.controller('md5', function($scope, md5) {
   $scope.files = [];
 
-  $scope.$watch( 'filelist', function( filelist ) {
-		console.log( filelist ); //
+  $scope.$watch('filelist', function( filelist ) {
     if ( !filelist ) return;
     var then = function( file ) {
       return function( result ) {
         file.md5 = result;
-        console.log("then called: ", result);
+        console.log('then called: ', result);
       };
     };
     for ( var i = filelist.length - 1; i >= 0; i-- ) {
@@ -66,11 +65,11 @@ app.directive('selectAll', function() {
 
 app.directive('dropArea', function() {
   return function( scope, elm, attrs ) {
-    elm.bind("dragover", function( event ) {
+    elm.bind('dragover', function( event ) {
       event.stopPropagation();
       event.preventDefault();
     });
-    elm.bind("drop", function( event ) {
+    elm.bind('drop', function( event ) {
       event.stopPropagation();
       event.preventDefault();
       scope.$apply(function() {
@@ -83,9 +82,9 @@ app.directive('dropArea', function() {
   };
 });
 
-app.directive("filelistBind", function() {
+app.directive('filelistBind', function() {
   return function( scope, elm, attrs ) {
-    elm.bind("change", function( evt ) {
+    elm.bind('change', function( evt ) {
       scope.$apply(function() {
         scope[ attrs.name ] = evt.target.files;
         //console.log( scope[ attrs.name ] );

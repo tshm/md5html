@@ -6,7 +6,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <title></title>
+  <title>MD5 Calculator</title>
   <meta name="description" content=""/>
   <meta name="viewport" content="width=device-width"/>
   <!-- build:js scripts/vendors.js -->
@@ -24,7 +24,9 @@
 <script src="scripts/vendor/json3.min.js"></script>
 <![endif]-->
 
-<div class="container" ng-controller="MainCtrl" ng-init="debug = true">
+<div class="container" ng-controller="MainCtrl" ng-init="debug = false">
+  <h2>MD5 Calcurator</h2>
+
   <button ng-show="debug" ng-click="$digest()">digest</button>
   <span ng-show="!supported" class="alert alert-error">browser is not supported.</span>
   <div ng-controller="md5">
@@ -53,21 +55,22 @@
 </div>
 
 <!-- build:js scripts/vendors.js -->
-  <script src="components/jquery/jquery.js"></script>
-  <script src="scripts/vendor/angular.js"></script>
-  <script src="scripts/vendor/md5.js"></script>
-  <!-- endbuild -->
+<script src="components/jquery/jquery.js"></script>
+<script src="scripts/vendor/angular.js"></script>
+<script src="scripts/vendor/md5.js"></script>
+<!-- endbuild -->
 
 <!-- build:js scripts/scripts.js -->
-  <script src="scripts/app.js"></script>
-  <!-- endbuild -->
+<script src="scripts/app.js"></script>
+<!-- endbuild -->
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-  <script>
-    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g,s)}(document,'script'));
-  </script>
+<script>
+  var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
 </body>
 </html>
