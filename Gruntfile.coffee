@@ -77,7 +77,7 @@ module.exports = (grunt) ->
         jshintrc: '.jshintrc'
       all: [
         'Gruntfile.js'
-        '<%= yeoman.app %>/scripts/{,*/}*.js'
+        '<%= yeoman.app %>/scripts/app.js'
       ]
     karma:
       unit:
@@ -254,7 +254,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask('build', [
     'clean:dist'
-    'jade:dist:release'
+    #'jade:dist'
     'jshint'
     #test'
     'coffee'
@@ -302,4 +302,14 @@ module.exports = (grunt) ->
         '<script>' + contents + post
     grunt.file.write(options.dest, lines.join('\n'))
     grunt.log.writeln('offline build task complete.')
+
+  grunt.registerTask 'up', 'update npm packages', () ->
+    done = this.async()
+    packages = (require './package.json')
+    package_names = (name for name, ver of packages["devDependencies"])
+    command = "npm install #{package_names.join(' ')} --save-dev"
+    grunt.log.writeln "running: npm install"
+    require('child_process').exec command, (err, stdout) ->
+      grunt.log.write(stdout)
+      done(err)
 
