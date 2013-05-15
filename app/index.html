@@ -41,7 +41,7 @@
   </div>
 
   <button ng-show="debug" ng-click="$digest()">digest</button>
-  <span ng-show="!supported" class="alert alert-error">browser is not supported.</span>
+  <span ng-show="!supported" ng-cloak class="alert alert-error">browser is not supported.</span>
   <div ng-controller="md5">
     <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
     <br>
@@ -57,7 +57,7 @@
       <thead><th>file name</th><th>md5</th></thead>
       <tbody>
         <tr ng-repeat="file in files">
-          <td>{{ file.name }}</td>
+          <td ng-bind="file.name"></td>
           <td>
             <input class="md5sum" readonly="true" select-all value="{{ file.md5 }}"/>
           </td>
@@ -65,8 +65,7 @@
       </tbody>
       </table>
     </div>
-    <pre ng-show="debug">{{ files | json }}</pre>
-    <pre ng-show="debug">{{ filelist | json }}</pre>
+    <pre ng-show="debug" ng-bind="files | json"></pre>
     <hr>
     <div>
       Visit <a href="http://github.com/tshm/md5html">source repository</a>.
