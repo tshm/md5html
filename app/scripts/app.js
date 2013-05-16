@@ -76,16 +76,15 @@
 
   app.directive('dropArea', function() {
     return function( scope, elm, attrs ) {
-      elm.bind('dragover', function( event ) {
+      var takeOverEvent = function( event ) {
         event.stopPropagation();
         event.preventDefault();
-      });
+      };
+      elm.bind('dragover', takeOverEvent );
       elm.bind('drop', function( event ) {
-        event.stopPropagation();
-        event.preventDefault();
-        scope.$apply(function() {
-          scope[ attrs.dropArea ] = event.originalEvent.dataTransfer.files;
-        });
+        takeOverEvent( event );
+        scope[ attrs.dropArea ] = event.originalEvent.dataTransfer.files;
+        scope.$apply();
       });
       elm.bind('click', function() {
         $('input').click();
