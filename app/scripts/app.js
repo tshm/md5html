@@ -47,7 +47,7 @@
         };
       };
       for ( var i = filelist.length - 1; i >= 0; i-- ) {
-        var file = filelist[i];
+        var file = filelist[ i ];
         md5.read( file ).then( then( file ) );
         file.md5 = 'Calculating...';
         $scope.files.push( file );
@@ -68,7 +68,7 @@
 
   app.directive('selectAll', function() {
     return function( scope, elm ) {
-      elm.bind('focus', function() {
+      elm.bind('click', function() {
         elm.select();
       });
     };

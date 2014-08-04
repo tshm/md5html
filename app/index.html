@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width"/>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
   <!-- build:css scripts/main.css -->
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'/>
   <link rel="stylesheet" href="styles/main.css"/>
   <!-- endbuild -->
 </head>
@@ -25,7 +26,7 @@
 <![endif]-->
 
 <div class="container" ng-controller="MainCtrl" ng-init="debug = false">
-  <h2 id="title" class="font-effect-emboss">Offline MD5 Calcurator WebPage.</h2>
+  <h2 id="title">Offline MD5 Calcurator WebPage.</h2>
 
   <div>
     The server-less web application for calculating MD5 digest
@@ -45,8 +46,10 @@
   <div ng-controller="md5">
     <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
     <br>
-    <div class="box" drop-area="filelist"><i class="icon icon-file"></i>Drop files OR
-      <br> Click to open file select dialog.</div>
+    <div class="box" drop-area="filelist"><i class="icon icon-file">
+        <i>Drop files OR
+          <br> Click to open file select dialog.</i>
+    </div>
 
     <div ng-hide="files.length == 0">
       <a href="#" class="btn" ng-click="clear()">
@@ -54,15 +57,16 @@
       <a href="#" class="btn" download="md5.txt" ng-click="download()" ng-href="{{ md5href }}">
         <i class="icon icon-file"></i> download file</a>
       <table class="table table-striped">
-      <thead><th>file name</th><th>md5</th></thead>
-      <tbody>
-        <tr ng-repeat="file in files">
-          <td ng-bind="file.name"></td>
-          <td>
-            <input class="md5sum" readonly="true" select-all value="{{ file.md5 }}"/>
-          </td>
-        </tr>
-      </tbody>
+        <thead><th>file name</th><th>md5</th></thead>
+        <tbody>
+          <tr ng-repeat="file in files">
+            <td ng-bind="file.name"></td>
+            <td>
+              <input class="md5sum" type="text" readonly="true"
+                select-all value="{{ file.md5 }}"/>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
     <pre ng-show="debug" ng-bind="files | json"></pre>
