@@ -9,7 +9,8 @@
   <title>Offline MD5 Calculator</title>
   <meta name="description" content="It calculates MD5 digest of the given files without using any server side processing.  It uses html5 File API and MD5 library (made by Cybozu Labs, Inc.)"/>
   <meta name="viewport" content="width=device-width"/>
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" >
+  <link rel="stylesheet" type="text/css" href="http://picnicss.com/v1.min.css">
   <!-- build:css scripts/main.css -->
   <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'/>
   <link rel="stylesheet" href="styles/main.css"/>
@@ -28,35 +29,21 @@
 <div class="container" ng-controller="MainCtrl" ng-init="debug = false">
   <h2 id="title">Offline MD5 Calcurator WebPage.</h2>
 
-  <div>
-    The server-less web application for calculating MD5 digest
-    for the given files.<br>
-    It uses:
-
-    <ul>
-      <li> html5 (FILE API)
-      <li> <a href="http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js">Cyboze Labs' MD5 library</a> to accomplish the job.
-    </ul>
-
-    [note] Due to the FILE API limitation, it may not work for large files.
-  </div>
-
-  <button ng-show="debug" ng-click="$digest()">digest</button>
   <span ng-show="!supported" ng-cloak class="alert alert-error">browser is not supported.</span>
   <div ng-controller="md5">
     <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
     <br>
-    <div class="box" drop-area="filelist"><i class="icon icon-file">
+    <div class="box" drop-area="filelist"><i class="fa fa-plus-circle"></i>
         <i>Drop files OR
           <br> Click to open file select dialog.</i>
     </div>
 
     <div ng-hide="files.length == 0">
-      <a href="#" class="btn" ng-click="clear()">
-        <i class="icon icon-remove"></i> clear</a>
-      <a href="#" class="btn" download="md5.txt" ng-click="download()" ng-href="{{ md5href }}">
-        <i class="icon icon-file"></i> download file</a>
-      <table class="table table-striped">
+      <a href="#" class="button success" ng-click="clear()">
+        <i class="fa fa-remove"></i> clear</a>
+      <a href="#" class="button warning" download="md5.txt" ng-click="download()" ng-href="{{ md5href }}">
+        <i class="fa fa-download"></i> download file</a>
+      <table class="primary">
         <thead><th>file name</th><th>md5</th></thead>
         <tbody>
           <tr ng-repeat="file in files">
@@ -64,17 +51,40 @@
             <td>
               <input class="md5sum" type="text" readonly="true"
                 select-all value="{{ file.md5 }}"/>
+              <i class="fa fa-spin fa-spinner"
+                ng-show="file.md5 == 'Calculating...'"></i>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
     <pre ng-show="debug" ng-bind="files | json"></pre>
-    <hr>
-    <div>
-      Visit <a href="http://github.com/tshm/md5html">source repository</a>.
-    </div>
   </div>
+  <hr>
+
+  <div>
+    The server-less web application for calculating MD5 digest
+    for the given files.<br>
+    It uses:
+
+    <ul>
+      <li> html5 (FILE API)
+      <li> 
+        <a href="http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js"
+          >Cyboze Labs' MD5 library</a> to accomplish the job.
+    </ul>
+
+    [note] Due to the FILE API limitation, it may not work for large files.
+  </div>
+
+  <hr>
+  <div>
+    Visit <a href="http://github.com/tshm/md5html">
+      <i class="fa fa-github"></i>
+      source repository</a>.
+  </div>
+
+  <button ng-show="debug" ng-click="$digest()">digest</button>
 </div>
 
 <!-- build:js scripts/vendors.js -->
