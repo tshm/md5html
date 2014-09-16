@@ -1,8 +1,14 @@
 {
   "name": "md5html",
   "version": "0.0.0",
-  "devDependencies": {},
   "dependencies": {
-    "jquery": "~2.0.0"
+    "angular": "1.3.x",
+    "md5": "http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.3.x"
+  },
+  "resolutions": {
+    "angular": "1.3.x"
   }
 }

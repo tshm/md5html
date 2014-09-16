@@ -1,3 +1,4 @@
+/* global window */
 (function( window, undefined ) {
   'use strict';
   // handle missing window.console.log cases.
@@ -18,7 +19,7 @@
     md5.read = function( file ) {
       console.log('read callded: ', file);
       var deffered = $q.defer();
-      var reader = new FileReader();
+      var reader = new window.FileReader();
       reader.onload = function( event ) {
         deffered.resolve( engine.calc( event.target.result ));
         $rootScope.$apply();
@@ -62,7 +63,8 @@
     var URL = $window.URL || $window.webkitURL;
     $scope.makeTxt = function() {
       var txt = $scope.files.map(function(f) { return f.name + ', ' + f.md5; }).join('\n');
-      $scope.md5href = URL.createObjectURL( new Blob([ txt ], {type: 'text/plain'}) );
+      $scope.md5href = URL.createObjectURL( new window.Blob([ txt ], {type: 'text/plain'}) );
+      console.log( $scope.md5href );
     };
   });
 
@@ -83,7 +85,8 @@
       elm.bind('dragover', takeOverEvent );
       elm.bind('drop', function( event ) {
         takeOverEvent( event );
-        scope[ attrs.dropArea ] = event.originalEvent.dataTransfer.files;
+        scope[ attrs.dropArea ] = event.dataTransfer.files;
+        //scope[ attrs.dropArea ] = event.originalEvent.dataTransfer.files;
         scope.$apply();
       });
       elm.bind('click', function() {

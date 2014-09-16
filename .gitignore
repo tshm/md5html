@@ -1,5 +1,5 @@
-tmp
-temp
 node_modules
-.local.vim
-app/components
+dist
+.tmp
+.sass-cache
+app/bower_components
