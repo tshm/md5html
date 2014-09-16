@@ -1,4 +1,3 @@
-/* global window */
 (function( window, undefined ) {
   'use strict';
   // handle missing window.console.log cases.
@@ -8,6 +7,10 @@
     CybozuLabs = window.CybozuLabs;
 
   var app = angular.module('md5htmlApp', []);
+
+  app.config(function( $compileProvider ) {   
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|blob):/);
+  });
 
   app.controller('MainCtrl', function( $scope, $window ) {
     $scope.supported = !!($window.File && $window.FileReader && $window.FileList);
