@@ -6,6 +6,18 @@ var $ = require('gulp-load-plugins')({
   pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license']
 });
 
+gulp.task('manifest', function () {
+  return gulp.src(['dist/**/*'])
+    .pipe($.manifest({
+      hash: true,
+      preferOnline: true,
+      network: ['http://*', 'https://*', '*'],
+      filename: 'appcache.manifest',
+      exclude: 'appcache.manifest'
+     }))
+    .pipe(gulp.dest('dist'));
+});
+
 gulp.task('scripts', function () {
   return gulp.src('app/scripts/**/*.js')
     .pipe($.jshint())
@@ -79,4 +91,8 @@ gulp.task('clean', function () {
   return gulp.src(['.tmp', 'dist'], { read: false }).pipe($.rimraf());
 });
 
-gulp.task('build', ['html', 'partials', 'images', 'fonts']);
+gulp.task('prep', ['html', 'partials', 'images', 'fonts']);
+
+gulp.task('build', ['prep'], function () {
+  gulp.start('manifest');
+});

@@ -1,0 +1,21 @@
+CACHE MANIFEST
+
+
+CACHE:
+404.html
+index.html
+scripts/main-7a8462d8.js
+scripts/vendor-f31feb86.js
+styles/main-a3d93226.css
+
+
+NETWORK:
+http://*
+https://*
+*
+
+
+SETTINGS:
+prefer-online
+
+# hash: dcc08e14dc0442eb2cd7272f39437d35c8d01e7119219d7daa46e029ea95e7f6
