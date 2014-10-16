@@ -86,12 +86,12 @@
       elm.bind('dragover', takeOverEvent );
       elm.bind('drop', function( evt ) {
         takeOverEvent( evt );
-        scope[ attrs.dropArea ] = [].slice.cll( evt.dataTransfer.files );
+        scope[ attrs.dropArea ] = [].slice.call( evt.dataTransfer.files );
         //scope[ attrs.dropArea ] = evt.originalEvent.dataTransfer.files;
         scope.$apply();
       });
       elm.bind('click', function() {
-        $window.document.getElementsByTagName('input')[0].click();
+        $window.document.querySelector('input').click();
       });
     };
   });
