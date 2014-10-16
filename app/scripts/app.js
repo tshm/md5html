@@ -2,7 +2,6 @@
   'use strict';
   // handle missing window.console.log cases.
   var console = window.console || {log: function(){}},
-    $ = window.jQuery,
     angular = window.angular,
     CybozuLabs = window.CybozuLabs;
 
@@ -50,12 +49,11 @@
           $scope.makeTxt();
         };
       };
-      for ( var i = filelist.length - 1; i >= 0; i-- ) {
-        var file = filelist[ i ];
+      filelist.forEach(function( file ) {
         md5.read( file ).then( then( file ) );
         file.md5 = 'Calculating...';
         $scope.files.push( file );
-      }
+      });
       $scope.filelist = undefined;
     });
 
@@ -79,21 +77,21 @@
     };
   });
 
-  app.directive('dropArea', function() {
+  app.directive('dropArea', function( $window ) {
     return function( scope, elm, attrs ) {
-      var takeOverEvent = function( event ) {
-        event.stopPropagation();
-        event.preventDefault();
+      var takeOverEvent = function( evt ) {
+        evt.stopPropagation();
+        evt.preventDefault();
       };
       elm.bind('dragover', takeOverEvent );
-      elm.bind('drop', function( event ) {
-        takeOverEvent( event );
-        scope[ attrs.dropArea ] = event.dataTransfer.files;
-        //scope[ attrs.dropArea ] = event.originalEvent.dataTransfer.files;
+      elm.bind('drop', function( evt ) {
+        takeOverEvent( evt );
+        scope[ attrs.dropArea ] = [].slice.cll( evt.dataTransfer.files );
+        //scope[ attrs.dropArea ] = evt.originalEvent.dataTransfer.files;
         scope.$apply();
       });
       elm.bind('click', function() {
-        $('input').click();
+        $window.document.getElementsByTagName('input')[0].click();
       });
     };
   });
@@ -102,7 +100,8 @@
     return function( scope, elm, attrs ) {
       elm.bind('change', function( evt ) {
         scope.$apply(function() {
-          scope[ attrs.name ] = evt.target.files;
+          var files = [].slice.call( evt.target.files );
+          scope[ attrs.name ] = files;
           //console.log( scope[ attrs.name ] );
         });
       });

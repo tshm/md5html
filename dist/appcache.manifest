@@ -4,7 +4,9 @@ CACHE MANIFEST
 CACHE:
 404.html
 index.html
+scripts/main-790b9196.js
 scripts/main-7a8462d8.js
+scripts/main-c6ffb21f.js
 scripts/vendor-f31feb86.js
 styles/main-a3d93226.css
 
@@ -18,4 +20,4 @@ https://*
 SETTINGS:
 prefer-online
 
-# hash: dcc08e14dc0442eb2cd7272f39437d35c8d01e7119219d7daa46e029ea95e7f6
+# hash: c97d6c748afd93a34fd265e0dc61cc993570c303efe5dd445fc50c106a0f021e
