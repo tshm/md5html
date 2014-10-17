@@ -1,5 +1,5 @@
+.session.vim
 node_modules
 .tmp
 .sass-cache
-app/bower_components
-.session.vim
+src/bower_components

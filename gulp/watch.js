@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 
 gulp.task('watch', ['wiredep'] ,function () {
-  gulp.watch('app/scripts/**/*.js', ['scripts']);
-  gulp.watch('app/images/**/*', ['images']);
+  gulp.watch('src/{app,components}/**/*.js', ['scripts']);
+  gulp.watch('src/assets/images/**/*', ['images']);
   gulp.watch('bower.json', ['wiredep']);
 });
