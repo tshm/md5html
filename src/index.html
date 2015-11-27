@@ -6,8 +6,8 @@
   <title>Offline MD5 Calculator</title>
   <meta name="description" content="It calculates MD5 digest of the given files without using any server side processing.  It uses html5 File API and MD5 library (made by Cybozu Labs, Inc.)"/>
   <meta name="viewport" content="width=device-width"/>
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="http://picnicss.com/releases/latest.min.css">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/picnicss/4.1.1/picnic.min.css">
 
   <!-- build:css({.tmp,src}) styles/main.css -->
   <link rel="stylesheet" href="app/main/main.css">
@@ -27,7 +27,7 @@
       <input type="file" name="filelist" filelist-bind multiple class="hidden"/>
       <br>
       <div class="box" drop-area="filelist"><i class="fa fa-plus-circle"></i>
-          <i>Drop files OR
+        <i>Drop files <i class="fa fa-files-o"></i>  OR
             <br> Click to open file select dialog.</i>
       </div>
 
@@ -38,11 +38,18 @@
           ng-href="{{ md5href }}">
           <i class="fa fa-download"></i> download file</a>
         <table class="primary">
-          <thead><th>file name</th><th>md5</th></thead>
+          <thead>
+            <th>file name</th>
+            <th>md5</th>
+          </thead>
           <tbody>
             <tr ng-repeat="file in files">
-              <td ng-bind="file.name"></td>
               <td>
+                <i class="fa fa-file-o"></i> 
+                <span ng-bind="file.name">
+              </td>
+              <td>
+                <i class="fa fa-puzzle-piece"></i> 
                 <input class="md5sum" type="text" readonly="true"
                   select-all value="{{ file.md5 }}"/>
                 <i class="fa fa-spin fa-spinner"
@@ -100,7 +107,6 @@
 
   <!-- build:js({src,.tmp}) scripts/main.js -->
   <script src="app/app.js"></script>
-
   <!-- inject:partials -->
   <!-- angular templates will be automaticaly converted in js and inserted here -->
   <!-- endinject -->
