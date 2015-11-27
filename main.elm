@@ -1,4 +1,4 @@
-module Md5html.Main where
+module Md5html (main) where
 {-| md5html implemented in Elm.
 -}
 
@@ -13,7 +13,7 @@ type alias File = String
 
 initModel : Model
 initModel =
-  { files = ["test", "file"]
+  { files = ["asdf", "file"]
   }
 
 type Action
