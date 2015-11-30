@@ -42,7 +42,6 @@ update action model =
 view : Address Action -> Model -> Html
 view address model =
   let
-    title = h2 [] [text "title"]
     list = List.map formatRow model.files
     formatRow file =
       tr []
@@ -57,17 +56,49 @@ view address model =
              ]
         ]
   in
-    section
-      []
-      [ title
-      , input
-        [ id "ff"
-        , multiple True
-        , type' "file"
-        , on "input" targetValue (\_ -> Signal.message address NoOp)
-        ] []
-      , table [] list
+    div [ class "container" ]
+      [ header
+      , section
+        []
+        [ input
+          [ id "ff"
+          , multiple True
+          , type' "file"
+          , on "input" targetValue (\_ -> Signal.message address NoOp)
+          ] []
+        , div [ class "box" ]
+          [ i [] 
+            [ i [ class "fa fa-plus-circle" ] []
+            , text "Drop files "
+            , i [ class "fa fa-files-o" ] []
+            , text "OR "
+            , text "Click to open file select dialog."
+            ]
+          ]
+        , table [] list
+        ]
+      , footer
       ]
+
+header =
+  div []
+    [ h2 [] [text "Offline MD5 Calcurator WebApp."]
+    ]
+
+footer =
+  div []
+    [ hr [] []
+    , text "The server-less web application for calculating MD5 digest for the given files.  It uses:"
+    , ul []
+      [ li [] [ text "html5 (FILE API)" ]
+      , li []
+        [ a
+          [ href "http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js" ]
+          [ text "Cyboze Labs' MD5 library " ]
+        , text "to accomplish the job."
+        ]
+      ]
+    ]
 
 main = Signal.map (view userActions.address) model
 
