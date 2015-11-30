@@ -6,7 +6,7 @@
     "bower": "bower install",
     "install": "elm-package install --yes",
     "build": "elm-make --yes main.elm --output elm.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "elm-make --yes main.elm --output elm.js"
   },
   "repository": {
     "type": "git",
