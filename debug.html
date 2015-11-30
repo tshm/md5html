@@ -15,6 +15,17 @@
 <body>
 </body>
 <script>
-  Elm.fullscreenDebug('Md5html', 'main.elm');
+var app = Elm.fullscreen('Md5html', { addFile: ['','']}, 'main.elm');
+  var ff = document.querySelector('#ff');
+  ff.addEventListener('change', handleFiles, false );
+  function handleFiles() {
+    var files = [].slice.call( this.files );
+    console.log( files );
+    files.forEach(function( file ) {
+      app.ports.addFile.send([file.name, 'XXX']);
+    });
+  }
+  app.ports.addFile.send([file.name, 'XXX']);
+  //app.ports.selectFile.send();
 </script>
 </html>
