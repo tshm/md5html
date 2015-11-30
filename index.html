@@ -23,9 +23,10 @@
     var files = [].slice.call( this.files );
     console.log( files );
     files.forEach(function( file ) {
+      app.ports.file.send({ name: file.name, md5: '...'});
       var reader = new window.FileReader();
-      reader.onload = function( event ) {
-        var md5 = engine.calc( event.target.result );
+      reader.onload = function( ev ) {
+        var md5 = engine.calc( ev.target.result );
         app.ports.file.send({ name: file.name, md5: md5 });
       };
       reader.onerror = function() {

@@ -24,13 +24,20 @@ initModel =
 
 type Action
   = NoOp
-  | AddFile File
+  | AddOrUpdateFile File
 
 update : Action -> Model -> Model
 update action model =
   case action of
     NoOp -> model
-    AddFile file -> { model | files = file :: model.files }
+    AddOrUpdateFile file ->
+      let
+        doesExist = List.any (\f -> f.name == file.name) model.files
+        files' = 
+          if doesExist
+          then List.map (\f -> if f.name == file.name then { f | md5 = file.md5 } else f ) model.files
+          else (file :: model.files)
+      in { model | files = files' }
 
 view : Address Action -> Model -> Html
 view address model =
@@ -70,7 +77,7 @@ userActions =
 
 actions : Signal Action
 actions =
-  Signal.merge userActions.signal (Signal.map AddFile file)
+  Signal.merge userActions.signal (Signal.map AddOrUpdateFile file)
 
 model : Signal Model
 model =
