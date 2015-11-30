@@ -20,21 +20,17 @@ type alias File =
 
 initModel : Model
 initModel =
-  { files =
-    [ { name = "test", md5 = "AAA" }
-    , { name = "xxxx", md5 = "999" }
-    ]
-  }
+  { files = [] }
 
 type Action
   = NoOp
-  | AddFile String String
+  | AddFile File
 
 update : Action -> Model -> Model
 update action model =
   case action of
     NoOp -> model
-    AddFile name md5 -> { model | files = (File name md5) :: model.files }
+    AddFile file -> { model | files = file :: model.files }
 
 view : Address Action -> Model -> Html
 view address model =
@@ -48,6 +44,7 @@ view address model =
         , td []
              [ input
                [ value file.md5
+               , size 32
                , readonly True
                ] []
              ]
@@ -56,7 +53,12 @@ view address model =
     section
       []
       [ title
-      , input [ id "ff", type' "file", on "input" targetValue (\_ -> Signal.message address NoOp)] []
+      , input
+        [ id "ff"
+        , multiple True
+        , type' "file"
+        , on "input" targetValue (\_ -> Signal.message address NoOp)
+        ] []
       , table [] list
       ]
 
@@ -68,7 +70,7 @@ userActions =
 
 actions : Signal Action
 actions =
-  Signal.merge userActions.signal addFileAction
+  Signal.merge userActions.signal (Signal.map AddFile file)
 
 model : Signal Model
 model =
@@ -87,9 +89,6 @@ onInput address contentToValue =
 
 {-| ports
 -}
-port addFile : Signal (String, String)
+port file : Signal { name: String, md5: String }
 
-addFileAction : Signal Action
-addFileAction =
-  Signal.map (\(x, y) -> AddFile x y) addFile
 

@@ -10,18 +10,28 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/picnicss/4.1.1/picnic.min.css">
   <link rel="stylesheet" href="src/main.css">
   <script src="elm.js"></script>
+  <script src="src/bower_components/md5/index.js"></script>
 </head>
 <body>
 </body>
 <script>
-  var app = Elm.fullscreen(Elm.Md5html, {addFile: ['x', 'y']});
+  var engine = CybozuLabs.MD5;
+  var app = Elm.fullscreen(Elm.Md5html, {file: { name: '', md5: ''}});
   var ff = document.querySelector('#ff');
   ff.addEventListener('change', handleFiles, false );
   function handleFiles() {
     var files = [].slice.call( this.files );
     console.log( files );
     files.forEach(function( file ) {
-      app.ports.addFile.send([file.name, 'XXX']);
+      var reader = new window.FileReader();
+      reader.onload = function( event ) {
+        var md5 = engine.calc( event.target.result );
+        app.ports.file.send({ name: file.name, md5: md5 });
+      };
+      reader.onerror = function() {
+        console.log('onerror callded');
+      };
+      reader.readAsBinaryString( file );
     });
   }
 </script>
