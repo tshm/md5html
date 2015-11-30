@@ -1,6 +1,8 @@
 Offline MD5 Calculator.
 =======================
 
+[![Build Status](https://travis-ci.org/tshm/md5html.svg?branch=master)](https://travis-ci.org/tshm/md5html)
+
 The server-less web application for calculating MD5 digest
 for the given files.
 It uses:
