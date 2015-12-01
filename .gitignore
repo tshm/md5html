@@ -5,3 +5,4 @@ node_modules
 src/bower_components
 elm-stuff
 elm.js
+out
