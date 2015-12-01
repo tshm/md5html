@@ -6,7 +6,7 @@ elm.js: main.elm
 publish: index.html elm.js
 	rm -rf out
 	mkdir out
-	pushd out; make -f ../Makefile page
+	cd out; make -f ../Makefile page
 
 page:
 	cp -r ../index.html ../elm.js ../bower.json ../src ./
