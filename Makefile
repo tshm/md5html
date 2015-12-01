@@ -4,13 +4,13 @@ elm.js: main.elm
 	npm run build
 
 publish: index.html elm.js
+	npm run bower
 	rm -rf out
 	mkdir out
 	cd out; make -f ../Makefile page
 
 page:
 	cp -r ../index.html ../elm.js ../bower.json ../src ./
-	npm run bower
 	git init
 	git config user.name "Travis IC"
 	git config user.email "2sm@csc.jp"
