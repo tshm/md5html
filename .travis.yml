@@ -1,6 +1,6 @@
 language: node_js
 sudo: required
-script: npm run build
+script: make publish
 
 services:
   - docker

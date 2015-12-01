@@ -1,7 +1,7 @@
 .PHONY: build page
 
 elm.js: main.elm
-	elm-make main.elm --output elm.js
+	npm run build
 
 publish: index.html elm.js
 	rm -rf out
