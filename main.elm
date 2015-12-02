@@ -48,6 +48,11 @@ view : Address Action -> Model -> Html
 view address model =
   let
     list = List.map formatRow model.files
+    tableHeader =
+      tr []
+        [ th [] [ text "filename" ]
+        , th [] [ text "MD5" ]
+        ]
     isDLReady = List.isEmpty model.files || (List.any (\f -> f.md5 == "...") model.files)
     buttons =
       div [ class (if isDLReady then "hidden" else "") ]
@@ -78,12 +83,17 @@ view address model =
         , text "Click to open file select dialog."
         ]
       ]
+    inputOrSpinner md5 elem =
+      if md5 == "..."
+      then i [ class "fa fa-spin fa-spinner" ] []
+      else elem
     formatRow file =
       tr []
         [ td []
              [ text file.name ]
         , td []
-             [ input
+             [ inputOrSpinner file.md5 <|
+               input
                [ value file.md5
                , size 32
                , readonly True
@@ -104,7 +114,9 @@ view address model =
           ] []
         , div [ class "box", id "dropbox" ] box
         , buttons
-        , table [] list
+        , table
+          [ class (if List.isEmpty list then "hidden" else "") ]
+          ( tableHeader :: list )
         ]
       , footer
       ]

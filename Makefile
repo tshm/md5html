@@ -1,4 +1,4 @@
-.PHONY: build page
+.PHONY: elm.js page
 
 elm.js: main.elm
 	npm run build
