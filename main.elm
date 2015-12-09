@@ -6,8 +6,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Signal exposing (Signal, Address)
-import Json.Decode as Json
-import Debug exposing (..)
+--import Json.Decode as Json
+--import Debug exposing (..)
 
 type alias Model =
   { files : List File
@@ -53,7 +53,9 @@ view address model =
         [ th [] [ text "filename" ]
         , th [] [ text "MD5" ]
         ]
-    isDLReady = List.isEmpty model.files || (List.any (\f -> f.md5 == "...") model.files)
+    isDLReady =
+      List.isEmpty model.files ||
+      (List.any (\f -> f.md5 == "...") model.files)
     buttons =
       div [ class (if isDLReady then "hidden" else "") ]
         [ a
@@ -121,11 +123,13 @@ view address model =
       , footer
       ]
 
+header : Html
 header =
   div []
     [ h2 [] [text "Offline MD5 Calcurator WebApp."]
     ]
 
+footer : Html
 footer =
   div []
     [ hr [] []
@@ -151,6 +155,7 @@ footer =
       ]
     ]
 
+main : Signal Html
 main = Signal.map (view userActions.address) model
 
 userActions : Signal.Mailbox Action
