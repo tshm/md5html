@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/tshm/md5html.png?label=ready&title=Ready)](https://waffle.io/tshm/md5html)
 Offline MD5 Calculator.
 =======================
 
