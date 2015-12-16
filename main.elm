@@ -6,6 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Signal exposing (Signal, Address)
+import StyledHtml exposing (icon, button, div)
 --import Json.Decode as Json
 --import Debug exposing (..)
 
@@ -57,37 +58,33 @@ view address model =
       List.isEmpty model.files ||
       (List.any (\f -> f.md5 == "...") model.files)
     buttons =
-      div [ class (if isDLReady then "hidden" else "") ]
-        [ a
+      Html.div [ class (if isDLReady then "hidden" else "") ]
+        [ StyledHtml.button ""
           [ id "download"
-          , class "button"
           , download True
           , downloadAs "md5.csv"
           ]
-          [ i [ class "fa fa-download" ] []
+          [ icon ["get_app"]
           , text " download"
           ]
         , text " "
-        , a
-          [ class "button warning"
-          , onClick address Clear
+        , StyledHtml.button ""
+          [ onClick address Clear
           ]
-          [ i [ class "fa fa-trash" ] []
+          [ icon ["delete"]
           , text " clear"
           ]
         ]
     box = 
       [ i [] 
-        [ i [ class "fa fa-plus-circle" ] []
-        , text "Drop files "
-        , i [ class "fa fa-files-o" ] []
-        , text "OR "
+        [ icon ["add_circle"]
+        , text "Drop files OR "
         , text "Click to open file select dialog."
         ]
       ]
     inputOrSpinner md5 elem =
       if md5 == "..."
-      then i [ class "fa fa-spin fa-spinner" ] []
+      then StyledHtml.spinner
       else elem
     formatRow file =
       tr []
@@ -103,7 +100,7 @@ view address model =
              ]
         ]
   in
-    div [ class "container" ]
+    Html.div [ class "container" ]
       [ header
       , section
         []
@@ -114,10 +111,10 @@ view address model =
           , type' "file"
           , on "input" targetValue (\_ -> Signal.message address NoOp)
           ] []
-        , div [ class "box", id "dropbox" ] box
+        , Html.div [ class "box", id "dropbox" ] box
         , buttons
         , table
-          [ class (if List.isEmpty list then "hidden" else "") ]
+          [ class <| "table " ++ (if List.isEmpty list then "hidden" else "") ]
           ( tableHeader :: list )
         ]
       , footer
@@ -125,13 +122,13 @@ view address model =
 
 header : Html
 header =
-  div []
+  Html.div []
     [ h2 [] [text "Offline MD5 Calcurator WebApp."]
     ]
 
 footer : Html
 footer =
-  div []
+  Html.div []
     [ hr [] []
     , text "The server-less web application for calculating MD5 digest for the given files.  It uses:"
     , ul []
@@ -142,14 +139,19 @@ footer =
           [ text "Cyboze Labs' MD5 library " ]
         , text "to accomplish the job."
         ]
+      , li []
+        [ a
+          [ href "http://elm-lang.org/" ]
+          [ text "Elm" ]
+        ]
       ]
     , text "[note] Due to the FILE API limitation, it may not work for large files."
     , hr [] []
-    , div []
+    , Html.div []
       [ text "Visit "
       , a
         [ href "http://github.com/tshm/md5html" ]
-        [ i [ class "fa fa-github"] []
+        [ icon ["link"]
         , text "source repository."
         ]
       ]
