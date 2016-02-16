@@ -19,7 +19,7 @@ div = Html.div
 button : String -> List Html.Attribute -> List Html.Html -> Html.Html
 button cls attr html =
   let
-      baseclass = "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+      baseclass = "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect "
   in
     Html.a ((Html.Attributes.class (baseclass ++ cls)) :: attr) html
 

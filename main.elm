@@ -59,7 +59,7 @@ view address model =
       (List.any (\f -> f.md5 == "...") model.files)
     buttons =
       Html.div [ class (if isDLReady then "hidden" else "") ]
-        [ StyledHtml.button ""
+        [ StyledHtml.button "mdl-button--colored"
           [ id "download"
           , download True
           , downloadAs "md5.csv"
