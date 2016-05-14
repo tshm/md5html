@@ -1,10 +1,12 @@
 .PHONY: elm.js page
 
 elm.js: main.elm
+	npm install
+	npm run bower
+	npm run install
 	npm run build
 
 publish: index.html elm.js
-	npm run bower
 	rm -rf out
 	mkdir out
 	cd out; make -f ../Makefile page
