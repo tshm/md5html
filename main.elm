@@ -35,45 +35,35 @@ type alias File =
   , md5 : String
   }
 
-initModel : Model
-initModel =
-  { files = []
-  }
-
 
 -- UPDATE
 
 type Msg
   = NoOp
-  | Drop
-  | UpdateFiles (Json.Value)
-  | OpenFileDialog
-  | AddOrUpdateFile File
   | Clear
+  | OpenFileDialog
+  | OpenFiles (Json.Value)
+  | AddOrUpdateFile File
 
 port openFileDialog : Bool -> Cmd msg
 
-port updateFiles : Json.Value -> Cmd msg
+port openFiles : Json.Value -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     NoOp -> (model, Cmd.none)
-    Drop -> ({ model | files = [File "test.txt" "...md5.."] }, Cmd.none)
-    UpdateFiles v -> (model, updateFiles v)
-    OpenFileDialog -> (model, openFileDialog True)
     Clear -> ({ model | files = [] }, Cmd.none)
+    OpenFileDialog -> (model, openFileDialog True)
+    OpenFiles jsarray -> (model, openFiles jsarray)
     AddOrUpdateFile file ->
       let
-        doesExist = List.any (\f -> f.name == file.name) model.files
-        files' = 
-          if doesExist
-          then List.map (\f -> if f.name == file.name
-                               then { f | md5 = file.md5 }
-                               else f
-                        ) model.files
-          else (file :: model.files)
-      in ({ model | files = files' }, Cmd.none)
+        (files, hit) = List.foldl updateMd5 ([], False) model.files
+        updateMd5 f (fs, hit) =
+          if f.name == file.name
+          then (file :: fs, True)
+          else (f :: fs, hit)
+      in ({ model | files = if hit then files else file :: files}, Cmd.none)
 
 
 -- SUBSCRIPTIONS
@@ -90,7 +80,7 @@ port file : (File -> msg) -> Sub msg
 view : Model -> Html Msg
 view model =
   let
-    list = List.map formatRow model.files
+    filelist = List.map formatRow model.files
     tableHeader =
       tr []
         [ th [] [ text "filename" ]
@@ -118,11 +108,9 @@ view model =
           ]
         ]
     box = 
-      [ i [] 
-        [ icon ["add_circle"]
-        , text "Drop files OR "
-        , text "Click to open file select dialog."
-        ]
+      [ i [] [ icon ["add_circle"] ]
+      , text "Drop files OR "
+      , text "Click to open file select dialog."
       ]
     inputOrSpinner md5 elem =
       if md5 == "..."
@@ -141,6 +129,20 @@ view model =
                ] []
              ]
         ]
+    targetFiles : Json.Decoder Json.Value
+    targetFiles =
+      Json.at ["target", "files"] Json.value
+    dndAttributes : List (Attribute Msg)
+    dndAttributes = 
+      let
+        eventnames = words "dragenter dragstart dragend dragleave dragover drag"
+        disableBubble = Options True True
+        handle name = onWithOptions name disableBubble (Json.succeed NoOp)
+        ondropHandler = onWithOptions "drop" disableBubble
+          (Json.map OpenFiles droppedFiles)
+        droppedFiles =
+          Json.at ["dataTransfer", "files"] Json.value
+      in ondropHandler :: (List.map handle eventnames)
   in
     Html.div [ class "container" ]
       [ header
@@ -149,42 +151,25 @@ view model =
           [ input
               [ id "fileopener"
               , class "hidden"
-              , multiple True
               , type' "file"
-              , on "change" (Json.map UpdateFiles targetFiles)
+              , multiple True
+              , on "change" (Json.map OpenFiles targetFiles)
               ] []
           , Html.div (
               [ class "box"
               , id "dropbox"
-              , dropzone "xx"
               , on "click" (Json.succeed OpenFileDialog)
               ] ++ dndAttributes )
               box
           , buttons
           , table
               [ class <|
-                  "table " ++ (if List.isEmpty list then "hidden" else "")
+                  "table " ++ (if List.isEmpty filelist then "hidden" else "")
               ]
-              ( tableHeader :: list )
+              ( tableHeader :: filelist )
           ]
       , footer
       ]
-
-dndAttributes : List (Attribute Msg)
-dndAttributes = 
-  let
-    eventnames = words "dragenter dragstart dragend dragleave dragover drag"
-    disableBubble = Options True True
-    handle name = onWithOptions name disableBubble (Json.succeed NoOp)
-    ondropHandler = onWithOptions "drop" disableBubble
-      (Json.map UpdateFiles droppedFiles)
-    droppedFiles =
-      Json.at ["dataTransfer", "files"] Json.value
-  in ondropHandler :: (List.map handle eventnames)
-
-targetFiles : Json.Decoder Json.Value
-targetFiles =
-  Json.at ["target", "files"] Json.value
 
 header : Html msg
 header =
@@ -196,7 +181,8 @@ footer : Html msg
 footer =
   Html.div []
     [ hr [] []
-    , text "The server-less web application for calculating MD5 digest for the given files.  It uses:"
+    , text ("The server-less web application for calculating MD5 digest "
+           ++ "for the given files.  It uses:")
     , ul []
       [ li [] [ text "html5 (FILE API)" ]
       , li []

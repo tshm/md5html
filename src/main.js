@@ -6,7 +6,7 @@ app.ports.openFileDialog.subscribe(function(v) {
   document.querySelector('#fileopener').click();
 });
 
-app.ports.updateFiles.subscribe(function( files ) {
+app.ports.openFiles.subscribe(function( files ) {
   var arrFiles = [].slice.call( files );
   // console.log('file(s) added: ', arrFiles );
   arrFiles.forEach(function( file ) {

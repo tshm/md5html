@@ -5,8 +5,8 @@
   "scripts": {
     "bower": "bower install",
     "install": "elm-package install --yes",
-    "build": "elm-make --yes main.elm --output elm.js",
-    "test": "elm-make --yes main.elm --output elm.js"
+    "build": "elm-make --warn --yes main.elm --output elm.js",
+    "test": "elm-make --warn --yes main.elm --output elm.js"
   },
   "repository": {
     "type": "git",
