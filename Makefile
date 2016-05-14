@@ -1,6 +1,6 @@
 .PHONY: elm.js page
 
-elm.js: main.elm
+elm.js: Main.elm StyledHtml.elm
 	npm install
 	npm run bower
 	npm run install
