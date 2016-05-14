@@ -1,18 +1,34 @@
-module Md5html (main) where
+port module Md5html exposing (main)
 {-| md5html implemented in Elm.
 -}
 
 import Html exposing (..)
+import Html.App as Html
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Signal exposing (Signal, Address)
 import StyledHtml exposing (icon, button, div)
---import Json.Decode as Json
+import Json.Decode as Json
+import String exposing (words)
 --import Debug exposing (..)
+
+main : Program Never
+main = Html.program
+  { init = init
+  , view = view
+  , update = update
+  , subscriptions = subscriptions
+  }
+
+
+-- MODEL
 
 type alias Model =
   { files : List File
   }
+
+init : (Model, Cmd Msg)
+init =
+  (Model [], Cmd.none)
 
 type alias File =
   { name : String
@@ -21,18 +37,32 @@ type alias File =
 
 initModel : Model
 initModel =
-  { files = [] }
+  { files = []
+  }
 
-type Action
+
+-- UPDATE
+
+type Msg
   = NoOp
+  | Drop
+  | UpdateFiles (Json.Value)
+  | OpenFileDialog
   | AddOrUpdateFile File
   | Clear
 
-update : Action -> Model -> Model
-update action model =
-  case action of
-    NoOp -> model
-    Clear -> { model | files = [] }
+port openFileDialog : Bool -> Cmd msg
+
+port updateFiles : Json.Value -> Cmd msg
+
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
+    NoOp -> (model, Cmd.none)
+    Drop -> ({ model | files = [File "test.txt" "...md5.."] }, Cmd.none)
+    UpdateFiles v -> (model, updateFiles v)
+    OpenFileDialog -> (model, openFileDialog True)
+    Clear -> ({ model | files = [] }, Cmd.none)
     AddOrUpdateFile file ->
       let
         doesExist = List.any (\f -> f.name == file.name) model.files
@@ -43,10 +73,22 @@ update action model =
                                else f
                         ) model.files
           else (file :: model.files)
-      in { model | files = files' }
+      in ({ model | files = files' }, Cmd.none)
 
-view : Address Action -> Model -> Html
-view address model =
+
+-- SUBSCRIPTIONS
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  file AddOrUpdateFile
+
+port file : (File -> msg) -> Sub msg
+
+
+-- VIEW
+
+view : Model -> Html Msg
+view model =
   let
     list = List.map formatRow model.files
     tableHeader =
@@ -69,7 +111,7 @@ view address model =
           ]
         , text " "
         , StyledHtml.button ""
-          [ onClick address Clear
+          [ onClick Clear
           ]
           [ icon ["delete"]
           , text " clear"
@@ -103,30 +145,54 @@ view address model =
     Html.div [ class "container" ]
       [ header
       , section
-        []
-        [ input
-          [ id "ff"
-          , class "hidden"
-          , multiple True
-          , type' "file"
-          , on "input" targetValue (\_ -> Signal.message address NoOp)
-          ] []
-        , Html.div [ class "box", id "dropbox" ] box
-        , buttons
-        , table
-          [ class <| "table " ++ (if List.isEmpty list then "hidden" else "") ]
-          ( tableHeader :: list )
-        ]
+          []
+          [ input
+              [ id "fileopener"
+              , class "hidden"
+              , multiple True
+              , type' "file"
+              , on "change" (Json.map UpdateFiles targetFiles)
+              ] []
+          , Html.div (
+              [ class "box"
+              , id "dropbox"
+              , dropzone "xx"
+              , on "click" (Json.succeed OpenFileDialog)
+              ] ++ dndAttributes )
+              box
+          , buttons
+          , table
+              [ class <|
+                  "table " ++ (if List.isEmpty list then "hidden" else "")
+              ]
+              ( tableHeader :: list )
+          ]
       , footer
       ]
 
-header : Html
+dndAttributes : List (Attribute Msg)
+dndAttributes = 
+  let
+    eventnames = words "dragenter dragstart dragend dragleave dragover drag"
+    disableBubble = Options True True
+    handle name = onWithOptions name disableBubble (Json.succeed NoOp)
+    ondropHandler = onWithOptions "drop" disableBubble
+      (Json.map UpdateFiles droppedFiles)
+    droppedFiles =
+      Json.at ["dataTransfer", "files"] Json.value
+  in ondropHandler :: (List.map handle eventnames)
+
+targetFiles : Json.Decoder Json.Value
+targetFiles =
+  Json.at ["target", "files"] Json.value
+
+header : Html msg
 header =
   Html.div []
     [ h2 [] [text "Offline MD5 Calcurator WebApp."]
     ]
 
-footer : Html
+footer : Html msg
 footer =
   Html.div []
     [ hr [] []
@@ -156,26 +222,4 @@ footer =
         ]
       ]
     ]
-
-main : Signal Html
-main = Signal.map (view userActions.address) model
-
-userActions : Signal.Mailbox Action
-userActions =
-  Signal.mailbox NoOp
-
-actions : Signal Action
-actions =
-  Signal.merge userActions.signal (Signal.map AddOrUpdateFile file)
-
-model : Signal Model
-model =
-  Signal.foldp update initModel actions
-
-{-| ports
--}
-port file : Signal { name: String, md5: String }
-
-port md5 : Signal (List File)
-port md5 = Signal.map .files model
 

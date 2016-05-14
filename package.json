@@ -20,6 +20,6 @@
   "homepage": "https://github.com/tshm/md5html",
   "devDependencies": {
     "bower": "^1.6.7",
-    "elm": "^0.16.0"
+    "elm": "^0.17.0"
   }
 }

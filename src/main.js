@@ -1,13 +1,14 @@
 var engine = CybozuLabs.MD5;
-var app = Elm.fullscreen(Elm.Md5html, {file: { name: '', md5: ''}});
-var ff = document.querySelector('#ff');
-ff.addEventListener('change', handleFiles, false );
-function handleFiles() {
-  addFiles( this.files );
-}
-function addFiles( files ) {
+var app = Elm.Md5html.fullscreen();
+
+app.ports.openFileDialog.subscribe(function(v) {
+  if (!v) return;
+  document.querySelector('#fileopener').click();
+});
+
+app.ports.updateFiles.subscribe(function( files ) {
   var arrFiles = [].slice.call( files );
-  console.log('file(s) added: ', arrFiles );
+  // console.log('file(s) added: ', arrFiles );
   arrFiles.forEach(function( file ) {
     app.ports.file.send({ name: file.name, md5: '...'});
     var reader = new window.FileReader();
@@ -16,33 +17,9 @@ function addFiles( files ) {
       app.ports.file.send({ name: file.name, md5: md5 });
     };
     reader.onerror = function() {
-      console.log('onerror callded');
+      console.error('reading file failure');
     };
     reader.readAsBinaryString( file );
   });
-}
-var dropbox = document.querySelector('#dropbox');
-dropbox.addEventListener('click', function() {
-  ff.click();
-}, false);
-dropbox.addEventListener('dragover', cancelEvent, false);
-dropbox.addEventListener('drop', handleFileDrop, false);
-function cancelEvent(ev) {
-  ev.stopPropagation();
-  ev.preventDefault();
-}
-function handleFileDrop(ev) {
-  cancelEvent( ev );
-  console.log('drop', ev );
-  addFiles( ev.dataTransfer.files );
-}
-// Blob handling
-function updateURL( files ) {
-  if (files.some(function(f) { return f.md5 == '...'; })) { return; }
-  console.log('md5 ports updated: ', files );
-  var URL = window.URL || window.webkitURL;
-  var txt = files.map(function(f) { return f.name + ', ' + f.md5; }).join('\n');
-  var url = URL.createObjectURL( new window.Blob([ txt ], {type: 'text/plain'}) );
-  document.querySelector('#download').setAttribute('href', url);
-}
-app.ports.md5.subscribe( updateURL );
+});
+
