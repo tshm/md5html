@@ -42,7 +42,7 @@ type Msg
   = NoOp
   | Clear
   | OpenFileDialog
-  | OpenFiles (Json.Value)
+  | OpenFiles Json.Value   -- Elm cannot natively handle FileList object.
   | AddOrUpdateFile File
 
 port openFileDialog : Bool -> Cmd msg
@@ -55,7 +55,7 @@ update msg model =
     NoOp -> (model, Cmd.none)
     Clear -> ({ model | files = [] }, Cmd.none)
     OpenFileDialog -> (model, openFileDialog True)
-    OpenFiles jsarray -> (model, openFiles jsarray)
+    OpenFiles filelistobj -> (model, openFiles filelistobj)
     AddOrUpdateFile file ->
       let
         (files, hit) = List.foldl updateMd5 ([], False) model.files
