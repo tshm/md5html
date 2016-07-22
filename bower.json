@@ -2,7 +2,7 @@
   "name": "md5html",
   "version": "0.0.0",
   "dependencies": {
-    "md5": "http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js"
+    "jshashes": "^1.0.5"
   },
   "devDependencies": {}
 }

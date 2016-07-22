@@ -187,9 +187,9 @@ footer =
       [ li [] [ text "html5 (FILE API)" ]
       , li []
         [ a
-          [ href "http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js" ]
-          [ text "Cyboze Labs' MD5 library " ]
-        , text "to accomplish the job."
+          [ href "https://github.com/h2non/jshashes" ]
+          [ text " jshashes library" ]
+        , span [] [ text " to accomplish the job." ]
         ]
       , li []
         [ a

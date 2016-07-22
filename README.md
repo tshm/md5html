@@ -10,7 +10,7 @@ It uses:
 
 * [elm](http://elm-lang.org/) 
 * html5 (FILE API)
-* [Cyboze Labs' MD5 library](http://labs.cybozu.co.jp/blog/mitsunari/2007/07/24/js/md5.js)
+* [jshashes](https://github.com/h2non/jshashes)
   to accomplish the job.
 
 
