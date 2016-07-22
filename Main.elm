@@ -24,16 +24,20 @@ main = Html.program
 
 type alias Model =
   { files : List File
+  , algoname : String
   }
 
 init : (Model, Cmd Msg)
 init =
-  (Model [], Cmd.none)
+  (Model [] "MD5", Cmd.none)
 
 type alias File =
   { name : String
-  , md5 : String
+  , hash : String
   }
+
+algonames : List String
+algonames = ["MD5","SHA1","SHA256","SHA512","RIPEMD","HMAC"]
 
 
 -- UPDATE
@@ -42,12 +46,13 @@ type Msg
   = NoOp
   | Clear
   | OpenFileDialog
-  | OpenFiles Json.Value   -- Elm cannot natively handle FileList object.
+  | OpenFiles Json.Value  -- Elm cannot natively handle FileList object.
   | AddOrUpdateFile File
+  | ChangeHashAlgo String
 
 port openFileDialog : Bool -> Cmd msg
 
-port openFiles : Json.Value -> Cmd msg
+port openFiles : { files: Json.Value, algoname: String } -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -55,15 +60,20 @@ update msg model =
     NoOp -> (model, Cmd.none)
     Clear -> ({ model | files = [] }, Cmd.none)
     OpenFileDialog -> (model, openFileDialog True)
-    OpenFiles filelistobj -> (model, openFiles filelistobj)
+    OpenFiles filelistobj ->
+      let
+        algoname = model.algoname
+      in (model, openFiles { files = filelistobj, algoname = algoname })
     AddOrUpdateFile file ->
       let
-        (files, hit) = List.foldl updateMd5 ([], False) model.files
-        updateMd5 f (fs, hit) =
+        (files, hit) = List.foldl updateHash ([], False) model.files
+        updateHash f (fs, hit) =
           if f.name == file.name
           then (file :: fs, True)
           else (f :: fs, hit)
       in ({ model | files = if hit then files else file :: files}, Cmd.none)
+    ChangeHashAlgo algoname ->
+      ({ files = [], algoname = algoname }, Cmd.none)
 
 
 -- SUBSCRIPTIONS
@@ -83,18 +93,18 @@ view model =
     filelist = List.map formatRow model.files
     tableHeader =
       tr []
-        [ th [] [ text "filename" ]
-        , th [] [ text "MD5" ]
+        [ th [] [ text "Filename" ]
+        , th [] [ text "Hash" ]
         ]
     isDLReady =
       List.isEmpty model.files ||
-      (List.any (\f -> f.md5 == "...") model.files)
+      (List.any (\f -> f.hash == "...") model.files)
     buttons =
       Html.div [ class (if isDLReady then "hidden" else "") ]
         [ StyledHtml.button "mdl-button--colored"
           [ id "download"
           , download True
-          , downloadAs "md5.csv"
+          , downloadAs "hash.csv"
           ]
           [ icon ["get_app"]
           , text " download"
@@ -112,8 +122,8 @@ view model =
       , text "Drop files OR "
       , text "Click to open file select dialog."
       ]
-    inputOrSpinner md5 elem =
-      if md5 == "..."
+    inputOrSpinner hash elem =
+      if hash == "..."
       then StyledHtml.spinner
       else elem
     formatRow file =
@@ -121,9 +131,9 @@ view model =
         [ td []
              [ text file.name ]
         , td []
-             [ inputOrSpinner file.md5 <|
+             [ inputOrSpinner file.hash <|
                input
-               [ value file.md5
+               [ value file.hash
                , size 32
                , readonly True
                ] []
@@ -146,9 +156,15 @@ view model =
   in
     Html.div [ class "container" ]
       [ header
-      , section
-          []
-          [ input
+      , section []
+          [ label [ class "algorithms" ]
+            [ text "Hash algorithm: "
+            , select [ on "change" (Json.map ChangeHashAlgo targetValue) ]
+              <| List.map
+                (\n -> option [ selected (n == model.algoname) ] [ text n ])
+                algonames
+            ]
+          , input
               [ id "fileopener"
               , class "hidden"
               , type' "file"

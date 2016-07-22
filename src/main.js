@@ -1,4 +1,3 @@
-var engine = new Hashes.MD5;
 var app = Elm.Md5html.fullscreen();
 
 app.ports.openFileDialog.subscribe(function(v) {
@@ -6,15 +5,17 @@ app.ports.openFileDialog.subscribe(function(v) {
   document.querySelector('#fileopener').click();
 });
 
-app.ports.openFiles.subscribe(function( files ) {
-  var arrFiles = [].slice.call( files );
+app.ports.openFiles.subscribe(function( arg ) {
+  console.log( 'algoname', arg.algoname );
+  var engine = new Hashes[ arg.algoname ];
+  var arrFiles = [].slice.call( arg.files );
   // console.log('file(s) added: ', arrFiles );
   arrFiles.forEach(function( file ) {
-    app.ports.file.send({ name: file.name, md5: '...'});
+    app.ports.file.send({ name: file.name, hash: '...'});
     var reader = new window.FileReader();
     reader.onload = function( ev ) {
-      var md5 = engine.hex( ev.target.result );
-      app.ports.file.send({ name: file.name, md5: md5 });
+      var hash = engine.hex( ev.target.result );
+      app.ports.file.send({ name: file.name, hash: hash });
     };
     reader.onerror = function() {
       console.error('reading file failure');
