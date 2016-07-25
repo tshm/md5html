@@ -3,7 +3,7 @@ port module Md5html exposing (main)
 -}
 
 import Html exposing (..)
-import Html.App as Html
+import Navigation
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import StyledHtml exposing (icon, button, div)
@@ -12,13 +12,32 @@ import String exposing (words)
 --import Debug exposing (..)
 
 main : Program Never
-main = Html.program
+main = Navigation.program urlParser
   { init = init
   , view = view
   , update = update
+  , urlUpdate = urlUpdate
   , subscriptions = subscriptions
   }
 
+-- URL Handlers
+
+toUrl : String -> String
+toUrl algoname =
+  "#/" ++ algoname
+
+fromUrl : String -> Result String String
+fromUrl url =
+  let
+    algoname = String.dropLeft 2 url
+  in
+    if List.member algoname algonames
+    then Ok algoname
+    else Err ""
+
+urlParser : Navigation.Parser (Result String String)
+urlParser =
+  Navigation.makeParser (fromUrl << .hash)
 
 -- MODEL
 
@@ -27,9 +46,9 @@ type alias Model =
   , algoname : String
   }
 
-init : (Model, Cmd Msg)
-init =
-  (Model [] "MD5", Cmd.none)
+init : Result String String -> (Model, Cmd Msg)
+init result =
+  urlUpdate result {algoname = "MD5", files = []}
 
 type alias File =
   { name : String
@@ -73,8 +92,15 @@ update msg model =
           else (f :: fs, hit)
       in ({ model | files = if hit then files else file :: files}, Cmd.none)
     ChangeHashAlgo algoname ->
-      ({ files = [], algoname = algoname }, Cmd.none)
+      ({ files = [], algoname = (Debug.log "change" algoname) }, Navigation.newUrl (toUrl algoname))
 
+urlUpdate : Result String String -> Model -> (Model, Cmd Msg)
+urlUpdate result model =
+  case result of
+    Ok algoname ->
+      ({ model | algoname = algoname }, Cmd.none)
+    Err _ ->
+      (model, Navigation.modifyUrl (toUrl model.algoname))
 
 -- SUBSCRIPTIONS
 
@@ -153,17 +179,28 @@ view model =
         droppedFiles =
           Json.at ["dataTransfer", "files"] Json.value
       in ondropHandler :: (List.map handle eventnames)
+    algoselector algoname =
+      let
+        menuitem name = li [class "mdl-menu__item", onClick <| ChangeHashAlgo name] [text name]
+      in Html.div [ class "algorithms" ]
+        [ text "Hash algorithm: "
+        , Html.button
+            [ class "mdl-button mdl-js-button"
+            , id "algoselector"
+            ]
+            [ text algoname ]
+        , ul
+            [ class "mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+            -- , on "click" (Json.string <| )
+            , attribute "for" "algoselector"
+            ] <| List.map menuitem
+              <| List.filter ((/=) algoname) algonames
+        ]
   in
     Html.div [ class "container" ]
       [ header
       , section []
-          [ label [ class "algorithms" ]
-            [ text "Hash algorithm: "
-            , select [ on "change" (Json.map ChangeHashAlgo targetValue) ]
-              <| List.map
-                (\n -> option [ selected (n == model.algoname) ] [ text n ])
-                algonames
-            ]
+          [ algoselector model.algoname
           , input
               [ id "fileopener"
               , class "hidden"
