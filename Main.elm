@@ -9,7 +9,6 @@ import Html.Events exposing (..)
 import StyledHtml exposing (icon, button, div)
 import Json.Decode as Json
 import String exposing (words)
---import Debug exposing (..)
 
 main : Program Never
 main = Navigation.program urlParser
@@ -56,7 +55,7 @@ type alias File =
   }
 
 algonames : List String
-algonames = ["MD5","SHA1","SHA256","SHA512","RIPEMD","HMAC"]
+algonames = ["MD5","SHA1","SHA256","SHA512","RMD160"]
 
 
 -- UPDATE
@@ -92,7 +91,7 @@ update msg model =
           else (f :: fs, hit)
       in ({ model | files = if hit then files else file :: files}, Cmd.none)
     ChangeHashAlgo algoname ->
-      ({ files = [], algoname = (Debug.log "change" algoname) }, Navigation.newUrl (toUrl algoname))
+      { files = [], algoname = algoname } ! [ Navigation.newUrl (toUrl algoname)]
 
 urlUpdate : Result String String -> Model -> (Model, Cmd Msg)
 urlUpdate result model =
@@ -181,20 +180,14 @@ view model =
       in ondropHandler :: (List.map handle eventnames)
     algoselector algoname =
       let
-        menuitem name = li [class "mdl-menu__item", onClick <| ChangeHashAlgo name] [text name]
-      in Html.div [ class "algorithms" ]
+        options = List.map menuitem algonames
+        menuitem name = option [value name] [text name]
+      in Html.label
+        [ class "algorithms" ]
         [ text "Hash algorithm: "
-        , Html.button
-            [ class "mdl-button mdl-js-button"
-            , id "algoselector"
-            ]
-            [ text algoname ]
-        , ul
-            [ class "mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
-            -- , on "click" (Json.string <| )
-            , attribute "for" "algoselector"
-            ] <| List.map menuitem
-              <| List.filter ((/=) algoname) algonames
+        , Html.select
+            [ on "change" <| Json.map ChangeHashAlgo targetValue ]
+            options
         ]
   in
     Html.div [ class "container" ]
