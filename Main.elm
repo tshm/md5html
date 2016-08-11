@@ -185,7 +185,9 @@ view model =
         [ class "algorithms" ]
         [ text "Hash algorithm: "
         , Html.select
-            [ on "change" <| Json.map ChangeHashAlgo targetValue ]
+            [ on "change" <| Json.map ChangeHashAlgo targetValue
+            , disabled (not <| List.isEmpty model.files)
+            ]
             (algonames |> List.map menuitem)
         ]
   in
