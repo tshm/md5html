@@ -1,18 +1,18 @@
 var app = Elm.Md5html.fullscreen();
 
-app.ports.openFileDialog.subscribe(function(v) {
-  if (!v) return;
+app.ports.openFileDialog.subscribe(function( v ) {
+  if ( !v ) return;
   document.querySelector('#fileopener').click();
 });
 
 app.ports.openFiles.subscribe(function( arg ) {
   if ( debug ) {
-    console.log( 'algoname', arg.algoname );
+    console.log('algoname', arg.algoname );
   }
   var engine = new Hashes[ arg.algoname ];
   var arrFiles = [].slice.call( arg.files );
   if ( debug ) {
-    console.log('file(s) added: ', arrFiles );
+    console.log('file(s) added:', arrFiles );
   }
   arrFiles.forEach(function( file ) {
     app.ports.file.send({ name: file.name, hash: '...'});
@@ -22,7 +22,7 @@ app.ports.openFiles.subscribe(function( arg ) {
       app.ports.file.send({ name: file.name, hash: hash });
     };
     reader.onerror = function( e ) {
-      console.error('reading file failure', e);
+      console.error('reading file failure', e );
       app.ports.file.send({ name: file.name, hash: 'failed to load'});
     };
     reader.readAsBinaryString( file );

@@ -99,7 +99,7 @@ urlUpdate result model =
     Ok algoname ->
       ({ model | algoname = algoname }, Cmd.none)
     Err _ ->
-      (model, Navigation.modifyUrl (toUrl model.algoname))
+      (model, Navigation.modifyUrl (toUrl "MD5"))
 
 -- SUBSCRIPTIONS
 
@@ -180,14 +180,13 @@ view model =
       in ondropHandler :: (List.map handle eventnames)
     algoselector algoname =
       let
-        options = List.map menuitem algonames
-        menuitem name = option [value name] [text name]
+        menuitem name = option [value name, selected (algoname == name)] [text name]
       in Html.label
         [ class "algorithms" ]
         [ text "Hash algorithm: "
         , Html.select
             [ on "change" <| Json.map ChangeHashAlgo targetValue ]
-            options
+            (algonames |> List.map menuitem)
         ]
   in
     Html.div [ class "container" ]
