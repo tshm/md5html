@@ -6,10 +6,14 @@ app.ports.openFileDialog.subscribe(function(v) {
 });
 
 app.ports.openFiles.subscribe(function( arg ) {
-  // console.log( 'algoname', arg.algoname );
+  if ( debug ) {
+    console.log( 'algoname', arg.algoname );
+  }
   var engine = new Hashes[ arg.algoname ];
   var arrFiles = [].slice.call( arg.files );
-  // console.log('file(s) added: ', arrFiles );
+  if ( debug ) {
+    console.log('file(s) added: ', arrFiles );
+  }
   arrFiles.forEach(function( file ) {
     app.ports.file.send({ name: file.name, hash: '...'});
     var reader = new window.FileReader();
