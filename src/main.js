@@ -21,8 +21,9 @@ app.ports.openFiles.subscribe(function( arg ) {
       var hash = engine.hex( ev.target.result );
       app.ports.file.send({ name: file.name, hash: hash });
     };
-    reader.onerror = function() {
-      console.error('reading file failure');
+    reader.onerror = function( e ) {
+      console.error('reading file failure', e);
+      app.ports.file.send({ name: file.name, hash: 'failed to load'});
     };
     reader.readAsBinaryString( file );
   });
