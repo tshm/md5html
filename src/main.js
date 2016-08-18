@@ -6,12 +6,12 @@ app.ports.openFileDialog.subscribe(function( v ) {
 });
 
 app.ports.openFiles.subscribe(function( arg ) {
-  if ( debug ) {
+  if ( DEBUG ) {
     console.log('algoname', arg.algoname );
   }
   var engine = new Hashes[ arg.algoname ];
   var arrFiles = [].slice.call( arg.files );
-  if ( debug ) {
+  if ( DEBUG ) {
     console.log('file(s) added:', arrFiles );
   }
   arrFiles.forEach(function( file ) {

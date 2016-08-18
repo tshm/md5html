@@ -8,3 +8,4 @@ elm.js
 out
 npm-debug.log
 .*.js
+bundle.js

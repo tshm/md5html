@@ -1,18 +1,19 @@
 .PHONY: elm.js page
 
-elm.js: Main.elm StyledHtml.elm
+bundle.js: Main.elm StyledHtml.elm src/main.js
 	npm install
 	npm run bower
 	npm run install
 	npm run build
+	npm run bundle
 
-publish: index.html elm.js
+publish: index.html bundle.js
 	rm -rf out
 	mkdir out
 	cd out; make -f ../Makefile page
 
 page:
-	cp -r ../index.html ../elm.js ../bower.json ../src ./
+	cp -r ../index.html ../bundle.js ../bower.json ../src ./
 	git init
 	git config user.name "Travis IC"
 	git config user.email "2sm@csc.jp"
