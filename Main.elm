@@ -6,7 +6,6 @@ import Html exposing (..)
 import Navigation
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import StyledHtml exposing (icon, button, div)
 import Json.Decode as Json
 import String exposing (words)
 
@@ -117,39 +116,38 @@ view model =
   let
     filelist = List.map formatRow model.files
     tableHeader =
-      tr []
-        [ th [] [ text "Filename" ]
-        , th [] [ text "Hash" ]
-        ]
+      thead []
+      [ tr []
+          [ th [] [ text "Filename" ]
+          , th [] [ text "Hash" ]
+          ]
+      ]
     isDLReady =
       List.isEmpty model.files ||
       (List.any (\f -> f.hash == "...") model.files)
     buttons =
       Html.div [ class (if isDLReady then "hidden" else "") ]
-        [ StyledHtml.button "mdl-button--colored"
+        [ button
           [ id "download"
+          , class "pure-button"
           , download True
           , downloadAs "hash.csv"
           ]
-          [ icon ["get_app"]
+          [ i [ class "fa fa-download"] []
           , text " download"
           ]
         , text " "
-        , StyledHtml.button ""
+        , button
           [ onClick Clear
+          , class "pure-button"
           ]
-          [ icon ["delete"]
+          [ i [ class "fa fa-trash"] []
           , text " clear"
           ]
         ]
-    box = 
-      [ i [] [ icon ["add_circle"] ]
-      , text "Drop files OR "
-      , text "Click to open file select dialog."
-      ]
     inputOrSpinner hash elem =
       if hash == "..."
-      then StyledHtml.spinner
+      then (i [class "fa fa-refresh fa-spin"] [])
       else elem
     formatRow file =
       tr []
@@ -207,11 +205,13 @@ view model =
               , id "dropbox"
               , on "click" (Json.succeed OpenFileDialog)
               ] ++ dndAttributes )
-              box
+              [ i [ class "fa fa-folder-open"] []
+              , text " Drop files OR Click to open file select dialog."
+              ]
           , buttons
           , table
               [ class <|
-                  "table " ++ (if List.isEmpty filelist then "hidden" else "")
+                  "pure-table " ++ (if List.isEmpty filelist then "hidden" else "")
               ]
               ( tableHeader :: filelist )
           ]
@@ -235,13 +235,17 @@ footer =
       , li []
         [ a
           [ href "https://github.com/h2non/jshashes" ]
-          [ text " jshashes library" ]
+          [ text " jshashes library "
+          , i [ class "fa fa-link"] []
+          ]
         , span [] [ text " to accomplish the job." ]
         ]
       , li []
         [ a
           [ href "http://elm-lang.org/" ]
-          [ text "Elm" ]
+          [ text "Elm "
+          , i [ class "fa fa-link"] []
+          ]
         ]
       ]
     , text "[note] Due to the FILE API limitation, it may not work for large files."
@@ -249,9 +253,9 @@ footer =
     , Html.div []
       [ text "Visit "
       , a
-        [ href "http://github.com/tshm/md5html" ]
-        [ icon ["link"]
-        , text "source repository."
+        [ href "http://github.com/tshm/md5html"]
+        [ i [ class "fa fa-github"] []
+        , text " source repository."
         ]
       ]
     ]
