@@ -3,6 +3,8 @@ port module Md5html exposing (main)
 -}
 
 import Html exposing (..)
+import Http
+import Task
 import Navigation
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -22,32 +24,30 @@ main = Navigation.program urlParser
 -- URL Handlers
 
 toUrl : String -> String
-toUrl algoname =
-  "#/" ++ algoname
-
-fromUrl : String -> Result String String
-fromUrl url =
-  let
-    algoname = String.dropLeft 2 url
-  in
-    if List.member algoname algonames
-    then Ok algoname
-    else Err ""
+toUrl userid =
+  "#/user/" ++ userid
 
 urlParser : Navigation.Parser (Result String String)
 urlParser =
-  Navigation.makeParser (fromUrl << .hash)
+  let
+    fromUrl url =
+      let
+        userid = Debug.log "fromUrl called" <| String.dropLeft 7 url
+      in
+        Ok userid
+  in Navigation.makeParser (fromUrl << .hash)
 
 -- MODEL
 
 type alias Model =
   { files : List File
   , algoname : String
+  , user : String
   }
 
 init : Result String String -> (Model, Cmd Msg)
 init result =
-  urlUpdate result {algoname = "MD5", files = []}
+  urlUpdate result {algoname = "MD5", files = [], user = ""}
 
 type alias File =
   { name : String
@@ -67,6 +67,8 @@ type Msg
   | OpenFiles Json.Value  -- Elm cannot natively handle FileList object.
   | AddOrUpdateFile File
   | ChangeHashAlgo String
+  | FetchSucceed String
+  | FetchFail Http.Error
 
 port openFileDialog : Bool -> Cmd msg
 
@@ -74,7 +76,11 @@ port openFiles : { files: Json.Value, algoname: String } -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
+  let
+    x = Debug.log "Msg" msg
+  in case msg of
+    FetchFail _ -> (model, Cmd.none)
+    FetchSucceed u -> ({ model | user = u }, Cmd.none)
     NoOp -> (model, Cmd.none)
     Clear -> ({ model | files = [] }, Cmd.none)
     OpenFileDialog -> (model, openFileDialog True)
@@ -90,16 +96,29 @@ update msg model =
           then (file :: fs, True)
           else (f :: fs, hit)
       in ({ model | files = if hit then files else file :: files}, Cmd.none)
-    ChangeHashAlgo algoname ->
-      { files = [], algoname = algoname } ! [ Navigation.newUrl (toUrl algoname)]
+    ChangeHashAlgo userid ->
+      { model | files = [], algoname = userid } ! [ Navigation.newUrl (toUrl userid)]
 
 urlUpdate : Result String String -> Model -> (Model, Cmd Msg)
 urlUpdate result model =
-  case result of
+  let
+    x = Debug.log "urlUpdate called" result
+  in case result of
     Ok algoname ->
-      ({ model | algoname = algoname }, Cmd.none)
+      ({ model | algoname = algoname }, getUserInfo algoname)
     Err _ ->
-      (model, Navigation.modifyUrl (toUrl "MD5"))
+      (model, Navigation.modifyUrl (toUrl "/user/3"))
+
+-- api call
+
+getUserInfo : String -> Cmd Msg
+getUserInfo str =
+  let
+    decodeUserInfo = Json.at ["args", "userid"] Json.string
+    url = "https://httpbin.org/get?userid=" ++ str
+  in
+    Task.perform FetchFail FetchSucceed (Http.get decodeUserInfo url)
+
 
 -- SUBSCRIPTIONS
 
@@ -193,6 +212,8 @@ view model =
   in
     Html.div [ class "container" ]
       [ header
+      , text "userid is "
+      , text model.user
       , section []
           [ algoselector model.algoname
           , input
@@ -221,13 +242,17 @@ view model =
 header : Html msg
 header =
   Html.div []
-    [ h2 [] [text "Offline MD5 Calcurator WebApp."]
+    [ h5 [] [text "test"]
     ]
 
 footer : Html msg
 footer =
   Html.div []
     [ hr [] []
+    , ul []
+      [ li [] [ a [href "#/user/3"] [text "user 3"] ]
+      , li [] [ a [href "#/user/6"] [text "user 6"] ]
+      ]
     , text ("The server-less web application for calculating MD5 digest "
            ++ "for the given files.  It uses:")
     , ul []

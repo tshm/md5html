@@ -24,10 +24,9 @@ body {
 }
 
 .box {
-  border: 2px dashed green;
+  border: 2px dashed;
   border-radius: 5px;
   padding: 30px;
-  background-color: lightgreen;
   margin: 5px;
   font-size: 1.2em;
   color: blue;
