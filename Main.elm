@@ -233,19 +233,17 @@ footer =
     , ul []
       [ li [] [ text "html5 (FILE API)" ]
       , li []
-        [ a
-          [ href "https://github.com/h2non/jshashes" ]
-          [ text " jshashes library "
-          , i [ class "fa fa-link"] []
-          ]
+        [ a [ href "https://github.com/h2non/jshashes" ]
+            [ i [ class "fa fa-link"]
+              [ text " jshashes library "]
+            ]
         , span [] [ text " to accomplish the job." ]
         ]
       , li []
-        [ a
-          [ href "http://elm-lang.org/" ]
-          [ text "Elm (functional programming language for browser)"
-          , i [ class "fa fa-link"] []
-          ]
+        [ a [ href "http://elm-lang.org/" ]
+            [ i [ class "fa fa-link"]
+              [ text " Elm (functional programming language for browser)" ]
+            ]
         ]
       ]
     , text "[note] Due to the FILE API limitation, it may not work for large files."
