@@ -243,7 +243,7 @@ footer =
       , li []
         [ a
           [ href "http://elm-lang.org/" ]
-          [ text "Elm "
+          [ text "Elm (functional programming language for browser)"
           , i [ class "fa fa-link"] []
           ]
         ]
