@@ -231,14 +231,14 @@ footer =
     , text ("The server-less web application for calculating MD5 digest "
            ++ "for the given files.  It uses:")
     , ul []
-      [ li [] [ text "html5 (FILE API)" ]
-      , li []
+      [ li []
         [ a [ href "https://github.com/h2non/jshashes" ]
             [ i [ class "fa fa-link"]
               [ text " jshashes library "]
             ]
         , span [] [ text " to accomplish the job." ]
         ]
+      , li [] [ text "html5 (FILE API)" ]
       , li []
         [ a [ href "http://elm-lang.org/" ]
             [ i [ class "fa fa-link"]
