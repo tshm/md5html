@@ -9,78 +9,75 @@ import Html.Events exposing (..)
 import Json.Decode as Json
 import String exposing (words)
 
-main : Program Never
-main = Navigation.program urlParser
+main : Program Never Model Msg
+main = Navigation.program updateLocation
   { init = init
   , view = view
   , update = update
-  , urlUpdate = urlUpdate
   , subscriptions = subscriptions
   }
 
 -- URL Handlers
 
-toUrl : String -> String
-toUrl algoname =
-  "#/" ++ algoname
+toUrl : Algorithm -> String
+toUrl algo =
+  "#/" ++ (toString algo)
 
-fromUrl : String -> Result String String
-fromUrl url =
-  let
-    algoname = String.dropLeft 2 url
-  in
-    if List.member algoname algonames
-    then Ok algoname
-    else Err ""
-
-urlParser : Navigation.Parser (Result String String)
-urlParser =
-  Navigation.makeParser (fromUrl << .hash)
+updateLocation : Navigation.Location -> Msg
+updateLocation { hash } =
+  ChangeHashAlgo <| parseAlgoname (String.dropLeft 2 hash)
 
 -- MODEL
 
 type alias Model =
   { files : List File
-  , algoname : String
+  , algo : Algorithm
   }
 
-init : Result String String -> (Model, Cmd Msg)
-init result =
-  urlUpdate result {algoname = "MD5", files = []}
+init : Navigation.Location -> (Model, Cmd Msg)
+init location =
+  update
+    (updateLocation location)
+    { algo = MD5, files = [] }
 
 type alias File =
   { name : String
   , hash : String
   }
 
-algonames : List String
-algonames = ["MD5","SHA1","SHA256","SHA512","RMD160"]
+type Algorithm = MD5 | SHA1 | SHA256 | SHA512 | RMD160
 
+algonames : List String
+algonames = List.map toString [MD5, SHA1, SHA256, SHA512, RMD160]
+
+parseAlgoname : String -> Algorithm
+parseAlgoname name =
+  case name of
+    "SHA1" -> SHA1
+    "SHA256" -> SHA256
+    "SHA512" -> SHA512
+    "RMD160" -> RMD160
+    _ -> MD5
 
 -- UPDATE
 
 type Msg
   = NoOp
   | Clear
-  | OpenFileDialog
   | OpenFiles Json.Value  -- Elm cannot natively handle FileList object.
   | AddOrUpdateFile File
-  | ChangeHashAlgo String
-
-port openFileDialog : Bool -> Cmd msg
+  | ChangeHashAlgo Algorithm
 
 port openFiles : { files: Json.Value, algoname: String } -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  case msg of
+  -- case msg of
+  case Debug.log "update" msg of
     NoOp -> (model, Cmd.none)
     Clear -> ({ model | files = [] }, Cmd.none)
-    OpenFileDialog -> (model, openFileDialog True)
     OpenFiles filelistobj ->
-      let
-        algoname = model.algoname
-      in (model, openFiles { files = filelistobj, algoname = algoname })
+      (model, openFiles { files = filelistobj, algoname = toString model.algo })
     AddOrUpdateFile file ->
       let
         (files, hit) = List.foldl updateHash ([], False) model.files
@@ -89,16 +86,10 @@ update msg model =
           then (file :: fs, True)
           else (f :: fs, hit)
       in ({ model | files = if hit then files else file :: files}, Cmd.none)
-    ChangeHashAlgo algoname ->
-      { files = [], algoname = algoname } ! [ Navigation.newUrl (toUrl algoname)]
-
-urlUpdate : Result String String -> Model -> (Model, Cmd Msg)
-urlUpdate result model =
-  case result of
-    Ok algoname ->
-      ({ model | algoname = algoname }, Cmd.none)
-    Err _ ->
-      (model, Navigation.modifyUrl (toUrl "MD5"))
+    ChangeHashAlgo algo ->
+      if algo == model.algo
+      then ( model, Cmd.none )
+      else { model | files = [], algo = algo } ! [ Navigation.newUrl (toUrl algo)]
 
 -- SUBSCRIPTIONS
 
@@ -176,14 +167,14 @@ view model =
         droppedFiles =
           Json.at ["dataTransfer", "files"] Json.value
       in ondropHandler :: (List.map handle eventnames)
-    algoselector algoname =
+    algoselector algo =
       let
-        menuitem name = option [value name, selected (algoname == name)] [text name]
+        menuitem name = option [value name, selected ((toString algo) == name)] [text name]
       in Html.label
         [ class "algorithms" ]
         [ text "Hash algorithm: "
         , Html.select
-            [ on "change" <| Json.map ChangeHashAlgo targetValue
+            [ on "change" <| Json.map (ChangeHashAlgo << parseAlgoname) targetValue
             , disabled (not <| List.isEmpty model.files)
             ]
             (algonames |> List.map menuitem)
@@ -192,22 +183,23 @@ view model =
     Html.div [ class "container" ]
       [ header
       , section []
-          [ algoselector model.algoname
+          [ algoselector model.algo
           , input
               [ id "fileopener"
               , class "hidden"
-              , type' "file"
+              , type_ "file"
               , multiple True
               , on "change" (Json.map OpenFiles targetFiles)
               ] []
-          , Html.div (
-              [ class "box"
-              , id "dropbox"
-              , on "click" (Json.succeed OpenFileDialog)
-              ] ++ dndAttributes )
-              [ i [ class "fa fa-folder-open"] []
-              , text " Drop files OR Click to open file select dialog."
-              ]
+          , Html.label [ for "fileopener" ]
+            [ Html.div (
+                [ class "box"
+                , id "dropbox"
+                ] ++ dndAttributes )
+                [ i [ class "fa fa-folder-open"] []
+                , text " Drop files OR Click to open file select dialog."
+                ]
+            ]
           , buttons
           , table
               [ class <|

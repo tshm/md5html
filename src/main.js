@@ -1,10 +1,5 @@
 var app = Elm.Md5html.fullscreen();
 
-app.ports.openFileDialog.subscribe(function( v ) {
-  if ( !v ) return;
-  document.querySelector('#fileopener').click();
-});
-
 app.ports.openFiles.subscribe(function( arg ) {
   if ( DEBUG ) {
     console.log('algoname', arg.algoname );
