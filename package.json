@@ -1,6 +1,6 @@
 {
   "name": "md5html",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Offline MD5 Calculator",
   "scripts": {
     "bower": "bower install",
@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/tshm/md5html",
   "devDependencies": {
-    "bower": "^1.6.7",
-    "elm": "^0.17.1",
-    "uglify-js": "^2.7.3"
+    "bower": "^1.8.0",
+    "elm": "^0.18.0",
+    "uglify-js": "^2.7.5"
   }
 }
