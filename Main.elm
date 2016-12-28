@@ -64,12 +64,9 @@ parseAlgoname name =
 type Msg
   = NoOp
   | Clear
-  | OpenFileDialog
   | OpenFiles Json.Value  -- Elm cannot natively handle FileList object.
   | AddOrUpdateFile File
   | ChangeHashAlgo Algorithm
-
-port openFileDialog : Bool -> Cmd msg
 
 port openFiles : { files: Json.Value, algoname: String } -> Cmd msg
 
@@ -79,7 +76,6 @@ update msg model =
   case Debug.log "update" msg of
     NoOp -> (model, Cmd.none)
     Clear -> ({ model | files = [] }, Cmd.none)
-    OpenFileDialog -> (model, openFileDialog True)
     OpenFiles filelistobj ->
       (model, openFiles { files = filelistobj, algoname = toString model.algo })
     AddOrUpdateFile file ->
@@ -195,14 +191,15 @@ view model =
               , multiple True
               , on "change" (Json.map OpenFiles targetFiles)
               ] []
-          , Html.div (
-              [ class "box"
-              , id "dropbox"
-              , on "click" (Json.succeed OpenFileDialog)
-              ] ++ dndAttributes )
-              [ i [ class "fa fa-folder-open"] []
-              , text " Drop files OR Click to open file select dialog."
-              ]
+          , Html.label [ for "fileopener" ]
+            [ Html.div (
+                [ class "box"
+                , id "dropbox"
+                ] ++ dndAttributes )
+                [ i [ class "fa fa-folder-open"] []
+                , text " Drop files OR Click to open file select dialog."
+                ]
+            ]
           , buttons
           , table
               [ class <|
