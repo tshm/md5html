@@ -1,0 +1,12 @@
+{
+  "short_name": "MD5 Calc",
+  "name": "Offline MD5 Calculator Web Application",
+  "icons": [{
+    "src": "icon192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }],
+  "theme_color": "cornflowerblue",
+  "background_color": "cornflowerblue",
+  "display": "standalone"
+}

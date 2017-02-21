@@ -26,5 +26,6 @@
     "elm": "^0.18.0",
     "elm-live": "^2.7.4",
     "uglify-js": "^2.7.5"
-  }
+  },
+  "dependencies": {}
 }
