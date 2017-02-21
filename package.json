@@ -3,6 +3,8 @@
   "version": "1.0.2",
   "description": "Offline MD5 Calculator",
   "scripts": {
+    "clean": "rm -rf node_modules/ elm-stuff/ elm.js bundle.js",
+    "start": "elm-live --debug --warn --yes Main.elm --output elm.js",
     "bower": "bower install",
     "install": "elm-package install --yes",
     "bundle": "uglifyjs elm.js src/main.js -o bundle.js --define DEBUG=false -c -m",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "bower": "^1.8.0",
     "elm": "^0.18.0",
+    "elm-live": "^2.7.4",
     "uglify-js": "^2.7.5"
   }
 }
