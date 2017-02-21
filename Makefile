@@ -13,7 +13,7 @@ publish: index.html bundle.js
 	cd out; make -f ../Makefile page
 
 page:
-	cp -r ../index.html ../bundle.js ../bower.json ../src ./
+	cp -r ../manifest.json ../*.ico ../*.png ../sw.js ../index.html ../bundle.js ../bower.json ../src ./
 	git init
 	git config user.name "Travis IC"
 	git config user.email "2sm@csc.jp"
