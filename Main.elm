@@ -19,9 +19,9 @@ main = Navigation.program updateLocation
 
 -- URL Handlers
 
-toUrl : Algorithm -> String
-toUrl algo =
-  "#/" ++ (toString algo)
+navigateToUrl : Algorithm -> Cmd Msg
+navigateToUrl algo =
+  Navigation.modifyUrl <| "#/" ++ (toString algo)
 
 updateLocation : Navigation.Location -> Msg
 updateLocation { hash } =
@@ -42,7 +42,7 @@ init location =
 
 type alias File =
   { name : String
-  , hash : String
+  , hash : Maybe String
   }
 
 type Algorithm = MD5 | SHA1 | SHA256 | SHA512 | RMD160
@@ -65,7 +65,8 @@ type Msg
   = NoOp
   | Clear
   | OpenFiles Json.Value  -- Elm cannot natively handle FileList object.
-  | AddOrUpdateFile File
+  | AddFile String
+  | UpdateFile File
   | ChangeHashAlgo Algorithm
 
 port openFiles : { files: Json.Value, algoname: String } -> Cmd msg
@@ -75,30 +76,45 @@ update msg model =
   -- case msg of
   case Debug.log "update" msg of
     NoOp -> (model, Cmd.none)
+
     Clear -> ({ model | files = [] }, Cmd.none)
+
     OpenFiles filelistobj ->
       (model, openFiles { files = filelistobj, algoname = toString model.algo })
-    AddOrUpdateFile file ->
+
+    AddFile filename ->
       let
-        (files, hit) = List.foldl updateHash ([], False) model.files
-        updateHash f (fs, hit) =
+        files =
+          if List.member filename (List.map .name model.files)
+          then model.files
+          else ( File filename Nothing ) :: model.files
+      in ({ model | files = files }, Cmd.none )
+
+    UpdateFile file ->
+      let
+        files = List.map updateHash model.files
+        updateHash f =
           if f.name == file.name
-          then (file :: fs, True)
-          else (f :: fs, hit)
-      in ({ model | files = if hit then files else file :: files}, Cmd.none)
+          then { f | hash = file.hash }
+          else f
+      in ({ model | files = files }, Cmd.none)
+
     ChangeHashAlgo algo ->
       if algo == model.algo
       then ( model, Cmd.none )
-      else { model | files = [], algo = algo } ! [ Navigation.newUrl (toUrl algo)]
+      else { model | files = [], algo = algo } ! [ navigateToUrl algo ]
 
 -- SUBSCRIPTIONS
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  file AddOrUpdateFile
+  Sub.batch
+    [ addfile AddFile
+    , updatefile UpdateFile
+    ]
 
-port file : (File -> msg) -> Sub msg
-
+port addfile : (String -> msg) -> Sub msg
+port updatefile : (File -> msg) -> Sub msg
 
 -- VIEW
 
@@ -113,11 +129,10 @@ view model =
           , th [] [ text "Hash" ]
           ]
       ]
-    isDLReady =
-      List.isEmpty model.files ||
-      (List.any (\f -> f.hash == "...") model.files)
+    isDLReady = model.files /= []
+      && List.all (\{hash} -> hash /= Nothing) model.files
     buttons =
-      Html.div [ class (if isDLReady then "hidden" else "") ]
+      Html.div [ class (if isDLReady then "" else "hidden") ]
         [ button
           [ id "download"
           , class "pure-button"
@@ -136,18 +151,13 @@ view model =
           , text " clear"
           ]
         ]
-    inputOrSpinner hash elem =
-      if hash == "..."
-      then (i [class "fa fa-refresh fa-spin"] [])
-      else elem
     formatRow file =
       tr []
         [ td []
              [ text file.name ]
         , td []
-             [ inputOrSpinner file.hash <|
-               input
-               [ value file.hash
+             [ input
+               [ value (Maybe.withDefault "..." file.hash)
                , size 32
                , readonly True
                ] []
