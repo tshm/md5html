@@ -3,12 +3,12 @@
   "version": "1.0.2",
   "description": "Offline MD5 Calculator",
   "scripts": {
-    "clean": "rm -rf node_modules/ elm-stuff/ elm.js bundle.js",
+    "clean": "rm -rf out node_modules/ elm-stuff/ elm.js",
     "start": "elm-live --debug --warn --yes Main.elm --output elm.js",
-    "bower": "bower install",
-    "install": "elm-package install --yes",
+    "install": "bower install && elm-package install --yes",
     "bundle": "uglifyjs elm.js src/main.js -o bundle.js --define DEBUG=false -c -m",
     "build": "elm-make --warn --yes Main.elm --output elm.js",
+    "workbox": "workbox-cli generate:sw",
     "test": "elm-make --warn --yes Main.elm --output elm.js"
   },
   "repository": {
@@ -24,6 +24,9 @@
   "devDependencies": {
     "bower": "^1.8.0",
     "elm": "^0.18.0",
-    "uglify-js": "^3.0.11"
+    "lighthouse": "^2.2.1",
+    "serve": "^6.0.1",
+    "uglify-js": "^3.0.11",
+    "workbox-cli": "^1.0.1"
   }
 }
