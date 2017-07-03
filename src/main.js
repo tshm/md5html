@@ -1,4 +1,4 @@
-/* global Elm Hashes DEBUG */
+/* global Elm DEBUG Hashes */
 var app = Elm.Md5html.fullscreen()
 
 app.ports.openFiles.subscribe(function (arg) {

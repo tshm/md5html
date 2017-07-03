@@ -1,18 +1,11 @@
-.PHONY: elm.js page dist publish
+.PHONY: page publish
 
-bundle.js: Main.elm src/main.js
+dist/bundle.js: src/*
 	npm install
-	npm run build
-	npm run bundle
+	npm run dist
 
-dist: index.html bundle.js
-	npm run workbox
-	rm -rf out
-	mkdir out
-	cp -r manifest.json *.ico *.png workbox*.js sw.js index.html bundle.js bower.json src ./out
-
-publish: dist
-	cd out; make -f ../Makefile page
+publish: dist/bundle.js
+	cd dist; make -f ../Makefile page
 
 page:
 	git init

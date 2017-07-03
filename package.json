@@ -3,13 +3,16 @@
   "version": "1.0.2",
   "description": "Offline MD5 Calculator",
   "scripts": {
-    "clean": "rm -rf out node_modules/ elm-stuff/ elm.js",
-    "start": "elm-live --debug --warn --yes Main.elm --output elm.js",
-    "install": "bower install && elm-package install --yes",
-    "bundle": "uglifyjs elm.js src/main.js -o bundle.js --define DEBUG=false -c -m",
-    "build": "elm-make --warn --yes Main.elm --output elm.js",
+    "clean": "rm -rf dist/ node_modules/ elm-stuff/ elm.js",
+    "debug": "elm-live --debug --warn --yes src/Main.elm --output elm.js",
+    "start": "npm run dist && serve dist",
+    "install": "elm-package install --yes",
+    "bundle": "uglifyjs elm.js src/main.js -o dist/bundle.js --define DEBUG=false -c -m",
+    "build": "elm-make --warn --yes src/Main.elm --output elm.js",
     "workbox": "workbox-cli generate:sw",
-    "test": "elm-make --warn --yes Main.elm --output elm.js"
+    "copy": "cp node_modules/jshashes/hashes.min.js src/main.css manifest.* *.ico *.png *sw*.js index.html ./dist",
+    "dist": "rm -rf dist && mkdir dist && npm run build && npm run bundle && npm run copy && npm run workbox",
+    "test": "elm-make --warn --yes src/Main.elm --output elm.js"
   },
   "repository": {
     "type": "git",
@@ -22,8 +25,8 @@
   },
   "homepage": "https://github.com/tshm/md5html",
   "devDependencies": {
-    "bower": "^1.8.0",
     "elm": "^0.18.0",
+    "jshashes": "^1.0.6",
     "lighthouse": "^2.2.1",
     "serve": "^6.0.1",
     "uglify-js": "^3.0.11",

@@ -4,13 +4,11 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <title>Offline MD5 Calculator</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color">
-  <meta name="description" content="It calculates MD5 digest of the given files without using any server side processing.  It uses html5 File API and MD5 library (made by Cybozu Labs, Inc.)"/>
+  <meta name="description" content="It calculates MD5 digest of the given files without using any server side processing.  It uses html5 File API and MD5 library "/>
   <meta name="viewport" content="width=device-width"/>
 </head>
 <body><p>This site requires javascript to be enabled.</p></body>
-<script async defer src="src/bower_components/jshashes/hashes.min.js"></script>
+<script async defer src="node_modules/jshashes/hashes.min.js"></script>
 <script>
   document.querySelector('p').remove()
   var DEBUG = true
