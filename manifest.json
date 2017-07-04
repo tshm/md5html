@@ -3,6 +3,11 @@
   "name": "Offline MD5 Calculator Web Application",
   "icons": [
     {
+      "src": "icon144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
       "src": "icon512.png",
       "sizes": "512x512",
       "type": "image/png"
