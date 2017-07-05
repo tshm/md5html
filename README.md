@@ -12,7 +12,8 @@ It uses:
 * html5 (FILE API)
 * [jshashes](https://github.com/h2non/jshashes)
   to accomplish the job.
-
+* [workbox](https://workboxjs.org/)
+  to make the site PWA (service worker).
 
 [note]
 Due to the FILE API limitation, it may not work for large files.
