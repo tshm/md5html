@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "Offline MD5 Calculator",
   "scripts": {
+    "devel": "cp node_modules/crypto-js/crypto-js.js src/ && elm-live --warn src/Main.elm --output src/elm.js",
     "clean": "rm -rf dist/ node_modules/ elm-stuff/ elm.js",
     "debug": "elm-live --debug --warn --yes src/Main.elm --output elm.js",
     "start": "npm run dist && serve dist",
@@ -26,6 +27,7 @@
   },
   "homepage": "https://github.com/tshm/md5html",
   "devDependencies": {
+    "crypto-js": "^3.1.9-1",
     "elm": "^0.18.0",
     "elm-analyse": "^0.9.3",
     "jshashes": "^1.0.6",
