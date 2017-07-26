@@ -1,9 +1,18 @@
-/* global Elm DEBUG Hashes */
+/* global Elm DEBUG */
 var app = Elm.Md5html.fullscreen()
+var worker = new Worker('worker.js')
+
+worker.addEventListener('message', function(obj) {
+  app.ports.updatefile.send(obj.data)
+}, false)
+
+app.ports.clearFiles.subscribe(function () {
+  var elem = document.getElementById('fileopener');
+  elem.value = null
+})
 
 app.ports.openFiles.subscribe(function (arg) {
   if (DEBUG) console.log('algoname', arg.algoname)
-  var engine = new Hashes[ arg.algoname ]()
   var arrFiles = [].slice.call(arg.files)
   if (DEBUG) console.log('file(s) added:', arrFiles)
 
@@ -12,8 +21,11 @@ app.ports.openFiles.subscribe(function (arg) {
     var reader = new window.FileReader()
 
     reader.onload = function (ev) {
-      var hash = engine.hex(ev.target.result)
-      app.ports.updatefile.send({ name: file.name, hash: hash })
+      worker.postMessage({
+        algoname: arg.algoname,
+        buffer: ev.target.result,
+        name: file.name
+      })
     }
 
     reader.onerror = function (e) {
@@ -21,7 +33,7 @@ app.ports.openFiles.subscribe(function (arg) {
       app.ports.updatefile.send({name: file.name, hash: 'failed to load'})
     }
 
-    reader.readAsBinaryString(file)
+    reader.readAsArrayBuffer(file)
   })
 })
 

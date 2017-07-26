@@ -106,6 +106,7 @@ type Msg
 
 port openFiles : { files : Json.Value, algoname : String } -> Cmd msg
 
+port clearFiles : () -> Cmd msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -115,7 +116,7 @@ update msg model =
             ( model, Cmd.none )
 
         Clear ->
-            ( { model | files = [] }, Cmd.none )
+            ( { model | files = [] }, clearFiles () )
 
         OpenFiles filelistobj ->
             ( model, openFiles { files = filelistobj, algoname = toString model.algo } )
@@ -330,11 +331,11 @@ footer =
             )
         , ul []
             [ li []
-                [ a [ href "https://github.com/h2non/jshashes" ]
+                [ a [ href "https://code.google.com/archive/p/crypto-js/" ]
                     [ i [ class "fa fa-link" ]
-                        [ text " jshashes library " ]
+                        [ text " CryptoJS library " ]
                     ]
-                , span [] [ text " to accomplish the job." ]
+                , span [] [ text " to accomplish the hashing." ]
                 ]
             , li [] [ text "html5 (FILE API)" ]
             , li []
