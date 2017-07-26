@@ -1,20 +1,19 @@
-
 self.importScripts('crypto-js.js')
 
 self.addEventListener('message', function(e) {
-  console.info(e)
-  var hash = self.CryptoJS[e.data.algoname](arrayBufferToWordArray(e.data.data))
+  var hash = self.CryptoJS[e.data.algoname](arrayBufferToWordArray(e.data.buffer))
   self.postMessage({
     name: e.data.name,
-    hash: hash.toString(self.CryptoJS.hex)
+    hash: hash.toString()
   })
 }, false)
 
-function arrayBufferToWordArray(ab) {
-  var i8a = new Uint8Array(ab);
-  var a = [];
-  for (var i = 0; i < i8a.length; i += 4) {
-    a.push(i8a[i] << 24 | i8a[i + 1] << 16 | i8a[i + 2] << 8 | i8a[i + 3]);
+function arrayBufferToWordArray(arrayBuf) {
+  var intArr = new Uint8Array(arrayBuf);
+  var wordArr = [];
+  for (var i = 0; i < intArr.length; i += 4) {
+    var v = intArr[i] << 24 | intArr[i + 1] << 16 | intArr[i + 2] << 8 | intArr[i + 3]
+    wordArr.push(v);
   }
-  return CryptoJS.lib.WordArray.create(a, i8a.length);
+  return CryptoJS.lib.WordArray.create(wordArr, intArr.length);
 }

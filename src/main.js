@@ -18,7 +18,7 @@ app.ports.openFiles.subscribe(function (arg) {
     reader.onload = function (ev) {
       worker.postMessage({
         algoname: arg.algoname,
-        data: ev.target.result,
+        buffer: ev.target.result,
         name: file.name
       })
     }
@@ -28,8 +28,7 @@ app.ports.openFiles.subscribe(function (arg) {
       app.ports.updatefile.send({name: file.name, hash: 'failed to load'})
     }
 
-    reader.readAsText(file, 'ASCII')
-    // reader.readAsText(file)
+    reader.readAsArrayBuffer(file)
   })
 })
 
