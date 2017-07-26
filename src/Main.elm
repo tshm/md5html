@@ -106,6 +106,7 @@ type Msg
 
 port openFiles : { files : Json.Value, algoname : String } -> Cmd msg
 
+port clearFiles : () -> Cmd msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -115,7 +116,7 @@ update msg model =
             ( model, Cmd.none )
 
         Clear ->
-            ( { model | files = [] }, Cmd.none )
+            ( { model | files = [] }, clearFiles () )
 
         OpenFiles filelistobj ->
             ( model, openFiles { files = filelistobj, algoname = toString model.algo } )

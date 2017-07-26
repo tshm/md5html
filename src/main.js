@@ -6,6 +6,11 @@ worker.addEventListener('message', function(obj) {
   app.ports.updatefile.send(obj.data)
 }, false)
 
+app.ports.clearFiles.subscribe(function () {
+  var elem = document.getElementById('fileopener');
+  elem.value = null
+})
+
 app.ports.openFiles.subscribe(function (arg) {
   if (DEBUG) console.log('algoname', arg.algoname)
   var arrFiles = [].slice.call(arg.files)
