@@ -11,7 +11,7 @@
     "bundle": "uglifyjs elm.js src/main.js -o dist/bundle.js --define DEBUG=false -c -m",
     "build": "elm-make --warn --yes src/Main.elm --output elm.js",
     "workbox": "workbox-cli generate:sw",
-    "copy": "cp node_modules/jshashes/hashes.min.js src/main.css manifest.* *.ico *.png *sw*.js index.html ./dist",
+    "copy": "cp node_modules/crypto-js/crypto-js.js src/main.css manifest.* *.ico *.png *sw*.js src/index.html ./dist",
     "dist": "rm -rf dist && mkdir dist && npm run build && npm run bundle && npm run copy && npm run workbox",
     "analyse": "elm-analyse",
     "test": "elm-make --warn --yes src/Main.elm --output elm.js"
