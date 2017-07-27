@@ -9,9 +9,9 @@ for the given files.
 It uses:
 
 * [elm](http://elm-lang.org/) 
-* html5 (FILE API)
-* [jshashes](https://github.com/h2non/jshashes)
-  to accomplish the job.
+* html5 (FILE API / webworker / service worker)
+* [CryptoJS](https://code.google.com/archive/p/crypto-js/)
+  to accomplish the hashing job.
 * [workbox](https://workboxjs.org/)
   to make the site PWA (service worker).
 
