@@ -14,7 +14,7 @@
     "copy": "cp node_modules/crypto-js/crypto-js.js src/worker.js src/main.css manifest.* *.ico *.png *sw*.js src/index.html ./dist",
     "dist": "rm -rf dist && mkdir dist && npm run build && npm run bundle && npm run copy && npm run workbox",
     "analyse": "elm-analyse",
-    "test": "elm-make --warn --yes src/Main.elm --output elm.js"
+    "test": "elm-make --warn --yes src/Main.elm --output elm.js && standard src/main.js src/worker.js"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "jshashes": "^1.0.6",
     "lighthouse": "^2.2.1",
     "serve": "^6.0.1",
+    "standard": "^10.0.2",
     "uglify-js": "^3.0.11",
     "workbox-cli": "^1.0.1"
   }
