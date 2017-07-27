@@ -1,12 +1,24 @@
 self.importScripts('crypto-js.js')
 
-self.addEventListener('message', function(e) {
-  var hash = self.CryptoJS[e.data.algoname](arrayBufferToWordArray(e.data.buffer))
-  self.postMessage({
-    name: e.data.name,
-    hash: hash.toString()
-  })
-}, false)
+self.onmessage = function (e) {
+  var reader = new self.FileReader()
+  var file = e.data.file;
+
+  reader.onload = function (ev) {
+    var hash = self.CryptoJS[e.data.algoname](arrayBufferToWordArray(ev.target.result))
+    self.postMessage({
+      name: file.name,
+      hash: hash.toString()
+    })
+  }
+
+  reader.onerror = function (e) {
+    self.postMessage({ error: `cannot read file #{e}`})
+  }
+
+  reader.readAsArrayBuffer(file)
+
+}
 
 function arrayBufferToWordArray(arrayBuf) {
   var intArr = new Uint8Array(arrayBuf);
