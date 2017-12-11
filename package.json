@@ -11,7 +11,7 @@
     "bundle": "uglifyjs elm.js src/main.js -o dist/bundle.js --define DEBUG=false -c -m",
     "build": "elm-make --warn --yes src/Main.elm --output elm.js",
     "workbox": "workbox-cli generate:sw",
-    "copy": "cp node_modules/crypto-js/crypto-js.js src/worker.js src/main.css manifest.* *.ico *.png *sw*.js src/index.html ./dist",
+    "copy": "cp node_modules/crypto-js/crypto-js.js src/worker.js src/main.css *.webmanifest *.ico *.png *sw*.js src/index.html ./dist",
     "dist": "rm -rf dist && mkdir dist && npm run build && npm run bundle && npm run copy && npm run workbox",
     "analyse": "elm-analyse",
     "test": "elm-make --warn --yes src/Main.elm --output elm.js && standard src/main.js src/worker.js"
@@ -29,12 +29,12 @@
   "devDependencies": {
     "crypto-js": "^3.1.9-1",
     "elm": "^0.18.0",
-    "elm-analyse": "^0.9.3",
+    "elm-analyse": "^0.13.1",
     "jshashes": "^1.0.6",
     "lighthouse": "^2.2.1",
     "serve": "^6.0.1",
     "standard": "^10.0.2",
     "uglify-js": "^3.0.11",
-    "workbox-cli": "^1.0.1"
+    "workbox-cli": "^2.1.2"
   }
 }

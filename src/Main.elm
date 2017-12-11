@@ -106,7 +106,9 @@ type Msg
 
 port openFiles : { files : Json.Value, algoname : String } -> Cmd msg
 
+
 port clearFiles : () -> Cmd msg
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
