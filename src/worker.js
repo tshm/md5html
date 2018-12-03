@@ -2,6 +2,7 @@
 self.importScripts('crypto-js.js')
 
 self.onmessage = function (e) {
+  if (!e.data) return
   var reader = new self.FileReader()
   var file = e.data.file
 

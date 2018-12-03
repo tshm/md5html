@@ -1,6 +1,7 @@
 /* global Elm Worker DEBUG */
-var app = Elm.Md5html.fullscreen()
+var app = Elm.Md5html.init()
 var worker = new Worker('worker.js')
+worker.postMessage(false)  // load script
 
 worker.onmessage = function (obj) {
   var data = obj.data
