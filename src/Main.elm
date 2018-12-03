@@ -3,37 +3,27 @@ port module Md5html exposing (main)
 {-| md5html implemented in Elm.
 -}
 
+import Browser
+import Browser.Navigation as Nav
 import Html exposing (..)
-import Navigation
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
 import String exposing (words)
+import Url
+import Url.Builder
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Navigation.program updateLocation
+    Browser.application
         { init = init
-        , view = view
+        , view = (\model -> { title = "title" , body = [ view model ] })
         , update = update
         , subscriptions = subscriptions
+        , onUrlChange = UrlChange
+        , onUrlRequest = UrlRequest
         }
-
-
-
--- URL Handlers
-
-
-navigateToUrl : Algorithm -> Cmd Msg
-navigateToUrl algo =
-    Navigation.modifyUrl <| "#/" ++ (toString algo)
-
-
-updateLocation : Navigation.Location -> Msg
-updateLocation { hash } =
-    ChangeHashAlgo <| parseAlgoname (String.dropLeft 2 hash)
-
 
 
 -- MODEL
@@ -42,14 +32,14 @@ updateLocation { hash } =
 type alias Model =
     { files : List File
     , algo : Algorithm
+    , key : Nav.Key
     }
 
 
-init : Navigation.Location -> ( Model, Cmd Msg )
-init location =
-    update
-        (updateLocation location)
-        { algo = MD5, files = [] }
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
+    { algo = MD5, files = [], key = key }
+    |> update (UrlChange url)
 
 
 type alias File =
@@ -68,7 +58,7 @@ type Algorithm
 
 algonames : List String
 algonames =
-    List.map toString [ MD5, SHA1, SHA256, SHA512, RMD160 ]
+    List.map Debug.toString [ MD5, SHA1, SHA256, SHA512, RMD160 ]
 
 
 parseAlgoname : String -> Algorithm
@@ -98,6 +88,9 @@ type Msg
     = NoOp
     | Clear
     | OpenFiles Json.Value
+      -- Navigation handlers
+    | UrlChange Url.Url
+    | UrlRequest Browser.UrlRequest
       -- Elm cannot natively handle FileList object.
     | AddFile String
     | UpdateFile File
@@ -117,21 +110,34 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        UrlRequest req ->
+            let
+                x = Debug.log "UrlRequest" req
+            in
+            ( model, Cmd.none )
+
+        UrlChange url ->
+            let
+                algo = Maybe.withDefault "MD5" url.fragment |> parseAlgoname
+            in
+                ({ model | algo = algo }, Cmd.none)
+
         Clear ->
             ( { model | files = [] }, clearFiles () )
 
         OpenFiles filelistobj ->
-            ( model, openFiles { files = filelistobj, algoname = toString model.algo } )
+            ( model, openFiles { files = filelistobj, algoname = Debug.toString model.algo } )
 
         AddFile filename ->
             let
                 files =
                     if List.member filename (List.map .name model.files) then
                         model.files
+
                     else
-                        (File filename Nothing) :: model.files
+                        File filename Nothing :: model.files
             in
-                ( { model | files = files }, Cmd.none )
+            ( { model | files = files }, Cmd.none )
 
         UpdateFile file ->
             let
@@ -141,16 +147,20 @@ update msg model =
                 updateHash f =
                     if f.name == file.name then
                         { f | hash = file.hash }
+
                     else
                         f
             in
-                ( { model | files = files }, Cmd.none )
+            ( { model | files = files }, Cmd.none )
 
         ChangeHashAlgo algo ->
             if algo == model.algo then
                 ( model, Cmd.none )
+
             else
-                { model | files = [], algo = algo } ! [ navigateToUrl algo ]
+                ( { model | files = [], algo = algo }
+                , Nav.pushUrl model.key (Url.Builder.relative ["#" ++ (Debug.toString algo)] [])
+                )
 
 
 
@@ -173,7 +183,6 @@ port updatefile : (File -> msg) -> Sub msg
 
 
 -- VIEW
-
 
 view : Model -> Html Msg
 view model =
@@ -199,21 +208,12 @@ view model =
                 [ class
                     (if isDLReady then
                         ""
+
                      else
                         "hidden"
                     )
                 ]
                 [ button
-                    [ id "download"
-                    , class "pure-button"
-                    , download True
-                    , downloadAs "hash.csv"
-                    ]
-                    [ i [ class "fa fa-download" ] []
-                    , text " download"
-                    ]
-                , text " "
-                , button
                     [ onClick Clear
                     , class "pure-button"
                     ]
@@ -246,74 +246,81 @@ view model =
                 eventnames =
                     words "dragenter dragstart dragend dragleave dragover drag"
 
-                disableBubble =
-                    Options True True
+                onWith name decoder =
+                    custom
+                        name
+                        (Json.map2
+                            (\msgDecoder off ->
+                                { message = msgDecoder
+                                , stopPropagation = off
+                                , preventDefault = off
+                                })
+                            decoder (Json.succeed True))
 
                 handle name =
-                    onWithOptions name disableBubble (Json.succeed NoOp)
+                    onWith name (Json.succeed NoOp)
 
                 ondropHandler =
-                    onWithOptions "drop"
-                        disableBubble
-                        (Json.map OpenFiles droppedFiles)
+                    onWith "drop" (Json.map OpenFiles droppedFiles)
 
                 droppedFiles =
                     Json.at [ "dataTransfer", "files" ] Json.value
             in
-                ondropHandler :: (List.map handle eventnames)
+            ondropHandler :: List.map handle eventnames
 
         algoselector algo =
             let
                 menuitem name =
-                    option [ value name, selected ((toString algo) == name) ] [ text name ]
+                    option [ value name, selected (Debug.toString algo == name) ] [ text name ]
             in
-                Html.label
-                    [ class "algorithms" ]
-                    [ text "Hash algorithm: "
-                    , Html.select
-                        [ on "change" <| Json.map (ChangeHashAlgo << parseAlgoname) targetValue
-                        , disabled (not <| List.isEmpty model.files)
-                        ]
-                        (algonames |> List.map menuitem)
+            Html.label
+                [ class "algorithms" ]
+                [ text "Hash algorithm: "
+                , Html.select
+                    [ on "change" <| Json.map (ChangeHashAlgo << parseAlgoname) targetValue
+                    , disabled (not <| List.isEmpty model.files)
                     ]
-    in
-        Html.div [ class "container" ]
-            [ header
-            , section []
-                [ algoselector model.algo
-                , input
-                    [ id "fileopener"
-                    , class "hidden"
-                    , type_ "file"
-                    , multiple True
-                    , on "change" (Json.map OpenFiles targetFiles)
-                    ]
-                    []
-                , Html.label [ for "fileopener" ]
-                    [ Html.div
-                        ([ class "box"
-                         , id "dropbox"
-                         ]
-                            ++ dndAttributes
-                        )
-                        [ i [ class "fa fa-folder-open" ] []
-                        , text " Drop files OR Click to open file select dialog."
-                        ]
-                    ]
-                , buttons
-                , table
-                    [ class <|
-                        "pure-table "
-                            ++ (if List.isEmpty filelist then
-                                    "hidden"
-                                else
-                                    ""
-                               )
-                    ]
-                    (tableHeader :: filelist)
+                    (algonames |> List.map menuitem)
                 ]
-            , footer
+    in
+    Html.div [ class "container" ]
+        [ header
+        , section []
+            [ algoselector model.algo
+            , input
+                [ id "fileopener"
+                , class "hidden"
+                , type_ "file"
+                , multiple True
+                , on "change" (Json.map OpenFiles targetFiles)
+                ]
+                []
+            , Html.label [ for "fileopener" ]
+                [ Html.div
+                    ([ class "box"
+                     , id "dropbox"
+                     ]
+                        ++ dndAttributes
+                    )
+                    [ i [ class "fa fa-folder-open" ] []
+                    , text " Drop files OR Click to open file select dialog."
+                    ]
+                ]
+            , buttons
+            , table
+                [ class <|
+                    "pure-table "
+                        ++ (if List.isEmpty filelist then
+                                "hidden"
+
+                            else
+                                ""
+                           )
+                ]
+                (tableHeader :: filelist)
             ]
+        , footer
+        ]
 
 
 header : Html msg
