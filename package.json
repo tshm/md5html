@@ -9,7 +9,7 @@
     "start": "npm run dist && serve dist",
     "bundle": "uglifyjs elm.js src/main.js -o dist/bundle.js --define DEBUG=false -c -m",
     "build": "elm make src/Main.elm --output elm.js",
-    "workbox": "workbox-cli generate:sw",
+    "workbox": "workbox generateSW",
     "copy": "cp node_modules/crypto-js/crypto-js.js src/worker.js src/main.css *.webmanifest *.ico *.png *sw*.js src/index.html ./dist",
     "dist": "rm -rf dist && mkdir dist && npm run build && npm run bundle && npm run copy && npm run workbox",
     "test": "elm make src/Main.elm --output elm.js && standard src/main.js src/worker.js"
