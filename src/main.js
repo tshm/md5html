@@ -1,5 +1,7 @@
 /* global Elm Worker DEBUG */
-var app = Elm.Md5html.init()
+var app = Elm.Md5html.init({
+  node: document.getElementById('elm')
+})
 var worker = new Worker('worker.js')
 worker.postMessage(false)  // load script
 

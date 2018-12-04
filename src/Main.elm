@@ -18,7 +18,7 @@ main : Program () Model Msg
 main =
     Browser.application
         { init = init
-        , view = (\model -> { title = "title" , body = [ view model ] })
+        , view = (\model -> { title = "Offline MD5 Calculator" , body = [ view model ] })
         , update = update
         , subscriptions = subscriptions
         , onUrlChange = UrlChange
@@ -58,7 +58,26 @@ type Algorithm
 
 algonames : List String
 algonames =
-    List.map Debug.toString [ MD5, SHA1, SHA256, SHA512, RMD160 ]
+    List.map toString [ MD5, SHA1, SHA256, SHA512, RMD160 ]
+
+toString : Algorithm -> String
+toString algo =
+    case algo of
+        SHA1 ->
+            "SHA1"
+
+        SHA256 ->
+            "SHA256"
+
+        SHA512 ->
+            "SHA512"
+
+        RMD160 ->
+            "RMD160"
+
+        _ ->
+            "MD5"
+
 
 
 parseAlgoname : String -> Algorithm
@@ -106,15 +125,17 @@ port clearFiles : () -> Cmd msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     -- case msg of
-    case Debug.log "update" msg of
+    case msg of
         NoOp ->
             ( model, Cmd.none )
 
         UrlRequest req ->
-            let
-                x = Debug.log "UrlRequest" req
-            in
-            ( model, Cmd.none )
+            case req of
+                Browser.Internal url ->
+                  ( model, Cmd.none )
+
+                Browser.External href ->
+                  ( model, Nav.load href )
 
         UrlChange url ->
             let
@@ -126,7 +147,7 @@ update msg model =
             ( { model | files = [] }, clearFiles () )
 
         OpenFiles filelistobj ->
-            ( model, openFiles { files = filelistobj, algoname = Debug.toString model.algo } )
+            ( model, openFiles { files = filelistobj, algoname = toString model.algo } )
 
         AddFile filename ->
             let
@@ -159,7 +180,7 @@ update msg model =
 
             else
                 ( { model | files = [], algo = algo }
-                , Nav.pushUrl model.key (Url.Builder.relative ["#" ++ (Debug.toString algo)] [])
+                , Nav.pushUrl model.key (Url.Builder.relative ["#" ++ (toString algo)] [])
                 )
 
 
@@ -271,7 +292,7 @@ view model =
         algoselector algo =
             let
                 menuitem name =
-                    option [ value name, selected (Debug.toString algo == name) ] [ text name ]
+                    option [ value name, selected (toString algo == name) ] [ text name ]
             in
             Html.label
                 [ class "algorithms" ]
@@ -327,6 +348,7 @@ header : Html msg
 header =
     Html.div []
         [ h2 [] [ text "Offline MD5 Calcurator WebApp." ]
+        , forkMeElem
         ]
 
 
@@ -371,3 +393,14 @@ footer =
                 ]
             ]
         ]
+
+
+forkMeElem : Html msg
+forkMeElem =
+    a
+        [ class "github-fork-ribbon"
+        , href "https://url.to-your.repo"
+        , attribute "data-ribbon" "Fork me on GitHub"
+        , title "Fork me on GitHub"
+        ]
+        [ text "Fork me on GitHub" ]
