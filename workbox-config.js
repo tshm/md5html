@@ -1,7 +1,7 @@
 module.exports = {
-  "globDirectory": "./dist",
+  "globDirectory": "./src",
   "globPatterns": ["*.*"],
-  "swDest": "./dist/sw.js",
+  "swDest": "./src/sw.js",
   "modifyUrlPrefix":{"/":""},
   "globIgnores": [
     "workbox-cli-config.js"

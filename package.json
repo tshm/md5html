@@ -1,18 +1,14 @@
 {
   "name": "md5html",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Offline MD5 Calculator",
   "scripts": {
-    "dev": "cp node_modules/crypto-js/crypto-js.js src/ && elm-live src/Main.elm --open --pushstate --dir=./src --start-page=debug.html -- --debug --output=src/elm.js",
-    "clean": "rm -rf dist/ node_modules/ elm-stuff/ elm.js",
-    "debug": "elm-live src/Main.elm -- --output elm.js",
-    "start": "npm run dist && serve dist",
-    "bundle": "uglifyjs elm.js src/main.js --define DEBUG=false --compress 'pure_funcs=\"F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9\",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | uglifyjs --mangle --output=dist/bundle.js",
-    "build": "elm make src/Main.elm --output elm.js --optimize",
-    "workbox": "workbox generateSW",
-    "copy": "cp node_modules/crypto-js/crypto-js.js src/worker.js src/main.css *.webmanifest *.ico *.png *sw*.js src/index.html ./dist",
-    "dist": "rm -rf dist && mkdir dist && npm run build && npm run bundle && npm run copy && npm run workbox",
-    "test": "elm make src/Main.elm --output elm.js && standard src/main.js src/worker.js"
+    "dev": "parcel src/debug.html",
+    "start": "parcel src/index.html",
+    "clean": "rm -rf dist/ node_modules/ elm-stuff/",
+    "build": "parcel build src/index.html",
+    "dist": "rm -rf dist && npm run build",
+    "test": "standard src/main.js src/worker.js"
   },
   "repository": {
     "type": "git",
@@ -27,14 +23,11 @@
   "devDependencies": {
     "crypto-js": "^3.1.9-1",
     "elm": "^0.19.0-bugfix2",
+    "elm-hot": "^1.0.1",
     "jshashes": "^1.0.6",
-    "lighthouse": "^4.0.0-alpha.2-3.2.1",
-    "serve": "^10.1.1",
-    "standard": "^12.0.1",
-    "uglify-js": "^3.4.9",
-    "workbox-cli": "^3.6.3"
-  },
-  "dependencies": {
-    "elm-live": "^3.2.3"
+    "node-elm-compiler": "^5.0.1",
+    "parcel-bundler": "^1.11.0",
+    "parcel-plugin-sw-precache": "^1.0.3",
+    "standard": "^12.0.1"
   }
 }

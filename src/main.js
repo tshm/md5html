@@ -1,22 +1,24 @@
-/* global Elm Worker DEBUG */
-var app = Elm.Md5html.init({
+/* global Worker */
+import { Elm } from './Main.elm'
+const app = Elm.Md5html.init({
   node: document.getElementById('elm')
 })
-var worker = new Worker('worker.js')
-worker.postMessage(false)  // load script
+const worker = new Worker('./worker.js')
+worker.postMessage(false) // load script
+const DEBUG = process.env.NODE_ENV === 'development'
 
 worker.onmessage = function (obj) {
-  var data = obj.data
+  const data = obj.data
   app.ports.updatefile.send(data)
 }
 
 app.ports.clearFiles.subscribe(function () {
-  var elem = document.getElementById('fileopener')
+  const elem = document.getElementById('fileopener')
   elem.value = null
 })
 
 app.ports.openFiles.subscribe(function (arg) {
-  var arrFiles = [].slice.call(arg.files)
+  const arrFiles = [].slice.call(arg.files)
   if (DEBUG) console.log('algoname', arg.algoname)
   if (DEBUG) console.log('file(s) added:', arrFiles)
 
@@ -28,3 +30,5 @@ app.ports.openFiles.subscribe(function (arg) {
     })
   })
 })
+
+console.log('loaded...')
