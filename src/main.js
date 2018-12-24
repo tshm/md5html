@@ -5,6 +5,7 @@ const app = Elm.Md5html.init({
 });
 const worker = new Worker('./worker.js');
 worker.postMessage(false);  // load script
+const DEBUG = process.env.NODE_ENV === 'development'
 
 worker.onmessage = function (obj) {
   const data = obj.data;
