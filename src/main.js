@@ -1,34 +1,34 @@
-/* global Elm Worker DEBUG */
-import { Elm } from './Main.elm';
+/* global Worker */
+import { Elm } from './Main.elm'
 const app = Elm.Md5html.init({
   node: document.getElementById('elm')
-});
-const worker = new Worker('./worker.js');
-worker.postMessage(false);  // load script
+})
+const worker = new Worker('./worker.js')
+worker.postMessage(false) // load script
 const DEBUG = process.env.NODE_ENV === 'development'
 
 worker.onmessage = function (obj) {
-  const data = obj.data;
-  app.ports.updatefile.send(data);
+  const data = obj.data
+  app.ports.updatefile.send(data)
 }
 
 app.ports.clearFiles.subscribe(function () {
-  const elem = document.getElementById('fileopener');
-  elem.value = null;
-});
+  const elem = document.getElementById('fileopener')
+  elem.value = null
+})
 
 app.ports.openFiles.subscribe(function (arg) {
-  const arrFiles = [].slice.call(arg.files);
-  if (DEBUG) console.log('algoname', arg.algoname);
-  if (DEBUG) console.log('file(s) added:', arrFiles);
+  const arrFiles = [].slice.call(arg.files)
+  if (DEBUG) console.log('algoname', arg.algoname)
+  if (DEBUG) console.log('file(s) added:', arrFiles)
 
   arrFiles.forEach(function (file) {
-    app.ports.addfile.send(file.name);
+    app.ports.addfile.send(file.name)
     worker.postMessage({
       algoname: arg.algoname,
       file: file
-    });
-  });
-});
+    })
+  })
+})
 
-console.log('loaded...');
+console.log('loaded...')
