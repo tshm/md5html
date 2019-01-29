@@ -357,7 +357,7 @@ footer =
     Html.div []
         [ hr [] []
         , text
-            ("The server-less web application for calculating MD5 digest "
+            ("The serverless (client-side-processing) web application for calculating MD5 digest "
                 ++ "for the given files.  It uses:"
             )
         , ul []

@@ -22,6 +22,10 @@ self.onmessage = function (e) {
     })
   }
 
+  self.postMessage({
+    name: file.name,
+    hash: 'start processing...'
+  })
   reader.readAsArrayBuffer(file)
 }
 

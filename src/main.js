@@ -18,17 +18,20 @@ app.ports.clearFiles.subscribe(function () {
 })
 
 app.ports.openFiles.subscribe(function (arg) {
+  console.time('openFiles() called')
   const arrFiles = [].slice.call(arg.files)
   if (DEBUG) console.log('algoname', arg.algoname)
   if (DEBUG) console.log('file(s) added:', arrFiles)
 
   arrFiles.forEach(function (file) {
+    console.log('sending', file.name)
     app.ports.addfile.send(file.name)
     worker.postMessage({
       algoname: arg.algoname,
       file: file
     })
   })
+  console.timeEnd('openFiles() called')
 })
 
 console.log('loaded...')
