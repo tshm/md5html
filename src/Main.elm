@@ -1,4 +1,4 @@
-port module Md5html exposing (main)
+port module Main exposing (main)
 
 {-| md5html implemented in Elm.
 -}
@@ -18,12 +18,13 @@ main : Program () Model Msg
 main =
     Browser.application
         { init = init
-        , view = (\model -> { title = "Offline MD5 Calculator" , body = [ view model ] })
+        , view = \model -> { title = "Offline MD5 Calculator", body = [ view model ] }
         , update = update
         , subscriptions = subscriptions
         , onUrlChange = UrlChange
         , onUrlRequest = UrlRequest
         }
+
 
 
 -- MODEL
@@ -39,7 +40,7 @@ type alias Model =
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     { algo = MD5, files = [], key = key }
-    |> update (UrlChange url)
+        |> update (UrlChange url)
 
 
 type alias File =
@@ -53,12 +54,12 @@ type Algorithm
     | SHA1
     | SHA256
     | SHA512
-    | RMD160
 
 
 algonames : List String
 algonames =
-    List.map toString [ MD5, SHA1, SHA256, SHA512, RMD160 ]
+    List.map toString [ MD5, SHA1, SHA256, SHA512 ]
+
 
 toString : Algorithm -> String
 toString algo =
@@ -72,12 +73,8 @@ toString algo =
         SHA512 ->
             "SHA512"
 
-        RMD160 ->
-            "RMD160"
-
         _ ->
             "MD5"
-
 
 
 parseAlgoname : String -> Algorithm
@@ -91,9 +88,6 @@ parseAlgoname name =
 
         "SHA512" ->
             SHA512
-
-        "RMD160" ->
-            RMD160
 
         _ ->
             MD5
@@ -132,16 +126,17 @@ update msg model =
         UrlRequest req ->
             case req of
                 Browser.Internal url ->
-                  ( model, Cmd.none )
+                    ( model, Cmd.none )
 
                 Browser.External href ->
-                  ( model, Nav.load href )
+                    ( model, Nav.load href )
 
         UrlChange url ->
             let
-                algo = Maybe.withDefault "MD5" url.fragment |> parseAlgoname
+                algo =
+                    Maybe.withDefault "MD5" url.fragment |> parseAlgoname
             in
-                ({ model | algo = algo }, Cmd.none)
+            ( { model | algo = algo }, Cmd.none )
 
         Clear ->
             ( { model | files = [] }, clearFiles () )
@@ -180,7 +175,7 @@ update msg model =
 
             else
                 ( { model | files = [], algo = algo }
-                , Nav.pushUrl model.key (Url.Builder.relative ["#" ++ (toString algo)] [])
+                , Nav.pushUrl model.key (Url.Builder.relative [ "#" ++ toString algo ] [])
                 )
 
 
@@ -204,6 +199,7 @@ port updatefile : (File -> msg) -> Sub msg
 
 
 -- VIEW
+
 
 view : Model -> Html Msg
 view model =
@@ -275,8 +271,11 @@ view model =
                                 { message = msgDecoder
                                 , stopPropagation = off
                                 , preventDefault = off
-                                })
-                            decoder (Json.succeed True))
+                                }
+                            )
+                            decoder
+                            (Json.succeed True)
+                        )
 
                 handle name =
                     onWith name (Json.succeed NoOp)

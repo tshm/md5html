@@ -1,6 +1,6 @@
 /* global Worker */
 import { Elm } from './Main.elm'
-const app = Elm.Md5html.init({
+const app = Elm.Main.init({
   node: document.getElementById('elm')
 })
 const worker = new Worker('./worker.js')
