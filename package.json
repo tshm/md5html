@@ -7,7 +7,7 @@
     "start": "parcel src/index.html",
     "clean": "rm -rf dist/ node_modules/ elm-stuff/",
     "build": "parcel build src/index.html",
-    "dist": "rm -rf dist && npm run build",
+    "deploy": "gh-pages -d dist",
     "test": "standard src/main.js src/worker.js"
   },
   "repository": {
@@ -24,6 +24,7 @@
     "crypto-js": "^4.1.1",
     "elm": "^0.19.0-bugfix6",
     "elm-hot": "^1.0.1",
+    "gh-pages": "^4.0.0",
     "node-elm-compiler": "^5.0.1",
     "parcel-bundler": "^1.11.0",
     "parcel-plugin-sw-precache": "^1.0.3",
