@@ -13,3 +13,4 @@ src/elm.js
 src/crypto-js.js
 yarn-error.log
 .cache
+.parcel-cache
