@@ -21,6 +21,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
